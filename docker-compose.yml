@@ -1,0 +1,83 @@
+version: '3.8'
+
+networks:
+  delivery_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: delivery_postgres
+    restart: always
+    networks:
+      - delivery_network
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-supersecretpass123}
+      POSTGRES_DB: ${DB_NAME:-ultrafast_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-ultrafast_db}" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  migrator:
+    image: migrate/migrate:v4.18.2
+    container_name: delivery_migrator
+    networks:
+      - delivery_network
+    volumes:
+      - ./db/migrations:/migrations:ro
+    command:
+      - -path=/migrations
+      - -database=postgres://${DB_USER:-postgres}:${DB_PASSWORD:-supersecretpass123}@postgres:5432/${DB_NAME:-ultrafast_db}?sslmode=disable
+      - up
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  cache:
+    image: redis:8.10-alpine
+    container_name: delivery_redis
+    restart: always
+    networks:
+      - delivery_network
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  broker:
+    image: rabbitmq:4.3-management-alpine
+    container_name: delivery_rabbitmq
+    restart: always
+    networks:
+      - delivery_network
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
