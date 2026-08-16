@@ -1,0 +1,16 @@
+{
+  "name": "dashroute-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DashRoute - Distributed logistics and auto-dispatch engine",
+  "scripts": {
+    "build": "pnpm -r --filter=!./services/dispatch-engine build",
+    "test": "pnpm -r --filter=!./services/dispatch-engine test",
+    "lint": "pnpm -r --filter=!./services/dispatch-engine lint",
+    "dev:auth": "pnpm --filter auth-service dev"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
