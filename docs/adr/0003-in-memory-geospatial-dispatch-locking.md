@@ -20,3 +20,4 @@ Execute proximity matching and atomic concurrency locking entirely within **Redi
 
    ```text
    SET courier:lock:<courier_id> "BUSY" NX EX 30
+   ```

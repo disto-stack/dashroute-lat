@@ -21,9 +21,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - '${DB_PORT:-5432}:5432'
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-dashroute}" ]
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-dashroute}']
       interval: 3s
       timeout: 5s
       retries: 5
@@ -53,9 +53,9 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - '${REDIS_PORT:-6379}:6379'
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 3s
       timeout: 3s
       retries: 5
@@ -72,10 +72,10 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
-      - "${RABBITMQ_PORT:-5672}:5672"
-      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+      - '${RABBITMQ_PORT:-5672}:5672'
+      - '${RABBITMQ_MGMT_PORT:-15672}:15672'
     healthcheck:
-      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -91,6 +91,4 @@ services:
     volumes:
       - ./docs/api:/usr/share/nginx/html/specs:ro
     ports:
-      - "${SWAGGER_PORT:-8080}:8080"
-
-
+      - '${SWAGGER_PORT:-8080}:8080'

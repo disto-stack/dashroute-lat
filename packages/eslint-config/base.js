@@ -1,12 +1,10 @@
+import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import globals from 'globals';
 
-/**
- * Base ESLint 9 Flat Config for TypeScript projects in DashRoute monorepo.
- */
-export const baseConfig = tseslint.config(
+export const baseConfig = defineConfig([
   {
     ignores: [
       '**/node_modules/**',
@@ -55,6 +53,7 @@ export const baseConfig = tseslint.config(
       'prefer-const': 'error',
     },
   },
-);
+]);
 
 export default baseConfig;
+

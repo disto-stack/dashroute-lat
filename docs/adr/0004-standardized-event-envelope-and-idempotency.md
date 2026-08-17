@@ -8,7 +8,7 @@ Accepted
 
 DashRoute is a polyglot microservices system built with Node.js/TypeScript and Go. Without a strictly enforced message envelope, message structures become inconsistent, complicating distributed tracing, auditing, debugging, and duplicate message detection.
 
-Because message brokers guarantee *at-least-once* delivery, consumers must safely handle redelivered or out-of-order messages.
+Because message brokers guarantee _at-least-once_ delivery, consumers must safely handle redelivered or out-of-order messages.
 
 ## Decision
 
@@ -23,3 +23,4 @@ Establish a mandatory **Standard Event Envelope** for all messages published to 
   "producer": "service-name",
   "payload": {}
 }
+```

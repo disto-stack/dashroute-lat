@@ -16,23 +16,24 @@ Implement an **Asynchronous Event-Driven Architecture (EDA)** backed by **Rabbit
 
 1. **Primary Exchange (`dashroute.events`):**
 
-   * Configured as a durable `topic` exchange to route business domain events using dot-notation routing keys (`order.created`, `delivery.assigned`, `delivery.completed`).
+   - Configured as a durable `topic` exchange to route business domain events using dot-notation routing keys (`order.created`, `delivery.assigned`, `delivery.completed`).
+
 2. **Consumer Queues:**
-   * `dispatch.orders.q`: Dedicated queue bound to `order.created` for the Go-based Dispatch Engine.
-   * `orders.assigned.q`: Dedicated queue bound to `delivery.assigned` for the Orders Service state updater.
-   * `audit.events.q`: Dedicated queue bound to `#` (all events) for immutable audit logging.
+   - `dispatch.orders.q`: Dedicated queue bound to `order.created` for the Go-based Dispatch Engine.
+   - `orders.assigned.q`: Dedicated queue bound to `delivery.assigned` for the Orders Service state updater.
+   - `audit.events.q`: Dedicated queue bound to `#` (all events) for immutable audit logging.
 3. **Dead Letter Exchange (`dashroute.dlx`):**
-   * A `fanout` exchange paired with `dead.letter.q` to isolate poisoned or repeatedly failed messages (after 3 consecutive `NACK` attempts) without stalling active queues.
+   - A `fanout` exchange paired with `dead.letter.q` to isolate poisoned or repeatedly failed messages (after 3 consecutive `NACK` attempts) without stalling active queues.
 
 ## Consequences
 
 ### Positive
 
-* **Low Ingress Latency:** Orders Service confirms order intake (`201 Created`) in <20ms while offloading dispatch computations to background workers.
-* **Fault Isolation:** A crash or slowdown in the Dispatch Engine or Audit Service does not impact order ingestion or API responsiveness.
-* **Scalability:** Worker consumers can be scaled horizontally and independently based on queue depth metrics.
+- **Low Ingress Latency:** Orders Service confirms order intake (`201 Created`) in <20ms while offloading dispatch computations to background workers.
+- **Fault Isolation:** A crash or slowdown in the Dispatch Engine or Audit Service does not impact order ingestion or API responsiveness.
+- **Scalability:** Worker consumers can be scaled horizontally and independently based on queue depth metrics.
 
 ### Negative
 
-* **Asynchronous Error Handling:** Failures occurring during dispatch must be handled via fallback compensation events rather than immediate HTTP error codes.
-* **Message Delivery Semantics:** Consumers must be designed to be idempotent to handle potential at-least-once message deliveries.
+- **Asynchronous Error Handling:** Failures occurring during dispatch must be handled via fallback compensation events rather than immediate HTTP error codes.
+- **Message Delivery Semantics:** Consumers must be designed to be idempotent to handle potential at-least-once message deliveries.
