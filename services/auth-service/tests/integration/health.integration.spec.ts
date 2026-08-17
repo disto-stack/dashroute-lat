@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { AppModule } from '../src/app.module.js';
+import { AppModule } from '../../src/app.module.js';
 
 describe('Auth Service (NestJS) Health Check', () => {
   let app: INestApplication;
@@ -23,7 +23,7 @@ describe('Auth Service (NestJS) Health Check', () => {
     }
   });
 
-  it('GET /health returns 200 and status ok', async () => {
+  it('GET /health should return 200 OK with service status', async () => {
     const res = await request(app.getHttpServer()).get('/health');
     expect(res.status).toBe(200);
     expect(res.body).toEqual({

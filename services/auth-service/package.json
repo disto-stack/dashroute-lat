@@ -9,11 +9,17 @@
     "dev": "tsx watch src/main.ts",
     "build": "tsc",
     "start": "node dist/main.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@casl/ability": "^7.0.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
+    "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-express": "^11.0.0",
     "argon2": "^0.41.1",
     "dotenv": "^16.4.7",
@@ -32,6 +38,7 @@
     "@types/node": "^22.10.7",
     "@types/pg": "^8.11.10",
     "@types/supertest": "^6.0.2",
+    "@vitest/coverage-v8": "^3.2.7",
     "drizzle-kit": "^0.30.4",
     "supertest": "^7.0.0",
     "tsx": "^4.19.2",
