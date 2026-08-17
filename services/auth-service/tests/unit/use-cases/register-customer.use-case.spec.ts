@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RegisterCustomerUseCase } from '../../../src/application/use-cases/register-customer.use-case.js';
 import { UserAlreadyExistsException } from '../../../src/domain/exceptions/domain.exceptions.js';
-import { IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
-import { IPasswordHasher } from '../../../src/domain/ports/password-hasher.port.js';
-import { ITokenService } from '../../../src/domain/ports/token-service.port.js';
+import { type IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
+import { type IPasswordHasher } from '../../../src/domain/ports/password-hasher.port.js';
+import { type ITokenService } from '../../../src/domain/ports/token-service.port.js';
 
 describe('RegisterCustomerUseCase (Unit)', () => {
   let useCase: RegisterCustomerUseCase;
@@ -15,9 +15,11 @@ describe('RegisterCustomerUseCase (Unit)', () => {
     mockUserRepo = {
       findByEmail: vi.fn(),
       findById: vi.fn(),
+      findCourierById: vi.fn(),
       findCourierByUserId: vi.fn(),
       saveCustomer: vi.fn((user) => Promise.resolve(user)),
       saveCourier: vi.fn(),
+      updateCourierVerification: vi.fn(),
     };
 
     mockHasher = {

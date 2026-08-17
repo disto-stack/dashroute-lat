@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type INestApplication } from '@nestjs/common';
 import { AppModule } from '../../src/app.module.js';
 
 describe('Auth Service (NestJS) Health Check', () => {

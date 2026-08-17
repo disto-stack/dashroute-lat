@@ -34,4 +34,3 @@ export class CourierNotFoundException extends DomainException {
     super(`Courier with identifier "${id}" not found`);
   }
 }
-

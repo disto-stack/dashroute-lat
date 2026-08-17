@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
-  ITokenService,
-  TokenPayload,
-  GeneratedTokens,
+  type ITokenService,
+  type TokenPayload,
+  type GeneratedTokens,
 } from '../../domain/ports/token-service.port.js';
 import { InvalidTokenException } from '../../domain/exceptions/domain.exceptions.js';
 

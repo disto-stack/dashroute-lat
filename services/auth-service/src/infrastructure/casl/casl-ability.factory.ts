@@ -1,12 +1,12 @@
 import {
   AbilityBuilder,
   createMongoAbility,
-  MongoAbility,
-  ExtractSubjectType,
-  InferSubjects,
+  type MongoAbility,
+  type ExtractSubjectType,
+  type InferSubjects,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
-import { AuthenticatedUser } from '../http/guards/jwt-auth.guard.js';
+import { type AuthenticatedUser } from '../http/guards/jwt-auth.guard.js';
 
 export type Action = 'manage' | 'create' | 'read' | 'update' | 'delete';
 
@@ -22,10 +22,7 @@ export class CourierSubject {
 }
 
 export type Subjects =
-  | InferSubjects<typeof UserSubject | typeof CourierSubject>
-  | 'all'
-  | 'User'
-  | 'Courier';
+  InferSubjects<typeof UserSubject | typeof CourierSubject> | 'all' | 'User' | 'Courier';
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 

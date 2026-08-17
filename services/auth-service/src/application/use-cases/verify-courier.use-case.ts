@@ -1,8 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { IUserRepository, USER_REPOSITORY_PORT } from '../../domain/ports/user-repository.port.js';
+import {
+  type IUserRepository,
+  USER_REPOSITORY_PORT,
+} from '../../domain/ports/user-repository.port.js';
 import { CourierNotFoundException } from '../../domain/exceptions/domain.exceptions.js';
-import { VerifyCourierDto } from '../dto/verify-courier.dto.js';
-import { Courier } from '../../domain/entities/courier.entity.js';
+import { type VerifyCourierDto } from '../dto/verify-courier.dto.js';
+import { type Courier } from '../../domain/entities/courier.entity.js';
 
 @Injectable()
 export class VerifyCourierUseCase {

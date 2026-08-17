@@ -3,7 +3,7 @@ import { GetProfileUseCase } from '../../../src/application/use-cases/get-profil
 import { UserNotFoundException } from '../../../src/domain/exceptions/domain.exceptions.js';
 import { User } from '../../../src/domain/entities/user.entity.js';
 import { Courier } from '../../../src/domain/entities/courier.entity.js';
-import { IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
+import { type IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
 
 describe('GetProfileUseCase (Unit)', () => {
   let useCase: GetProfileUseCase;
@@ -13,9 +13,11 @@ describe('GetProfileUseCase (Unit)', () => {
     mockUserRepo = {
       findByEmail: vi.fn(),
       findById: vi.fn(),
+      findCourierById: vi.fn(),
       findCourierByUserId: vi.fn(),
       saveCustomer: vi.fn(),
       saveCourier: vi.fn(),
+      updateCourierVerification: vi.fn(),
     };
 
     useCase = new GetProfileUseCase(mockUserRepo);

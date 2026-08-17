@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import {
-  IUserRepository,
-  CreateCourierParams,
+  type IUserRepository,
+  type CreateCourierParams,
 } from '../../../domain/ports/user-repository.port.js';
 import { User } from '../../../domain/entities/user.entity.js';
 import { Courier } from '../../../domain/entities/courier.entity.js';
@@ -162,10 +162,7 @@ export class DrizzleUserRepository implements IUserRepository {
     });
   }
 
-  async updateCourierVerification(
-    courierId: string,
-    isVerified: boolean,
-  ): Promise<Courier | null> {
+  async updateCourierVerification(courierId: string, isVerified: boolean): Promise<Courier | null> {
     const [updated] = await this.db
       .update(couriers)
       .set({
@@ -188,4 +185,3 @@ export class DrizzleUserRepository implements IUserRepository {
     });
   }
 }
-

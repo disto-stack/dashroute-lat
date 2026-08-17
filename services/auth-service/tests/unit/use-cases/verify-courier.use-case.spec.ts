@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { VerifyCourierUseCase } from '../../../src/application/use-cases/verify-courier.use-case.js';
 import { CourierNotFoundException } from '../../../src/domain/exceptions/domain.exceptions.js';
 import { Courier } from '../../../src/domain/entities/courier.entity.js';
-import { IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
+import { type IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
 
 describe('VerifyCourierUseCase (Unit)', () => {
   let useCase: VerifyCourierUseCase;
@@ -52,9 +52,9 @@ describe('VerifyCourierUseCase (Unit)', () => {
   it('should throw CourierNotFoundException when courier is not found', async () => {
     vi.mocked(mockUserRepo.findCourierById).mockResolvedValue(null);
 
-    await expect(
-      useCase.execute('cur_nonexistent', { isVerified: true }),
-    ).rejects.toThrow(CourierNotFoundException);
+    await expect(useCase.execute('cur_nonexistent', { isVerified: true })).rejects.toThrow(
+      CourierNotFoundException,
+    );
 
     expect(mockUserRepo.updateCourierVerification).not.toHaveBeenCalled();
   });

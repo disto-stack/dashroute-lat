@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RefreshTokenUseCase } from '../../../src/application/use-cases/refresh-token.use-case.js';
-import { UserNotFoundException, InvalidTokenException } from '../../../src/domain/exceptions/domain.exceptions.js';
+import {
+  UserNotFoundException,
+  InvalidTokenException,
+} from '../../../src/domain/exceptions/domain.exceptions.js';
 import { User } from '../../../src/domain/entities/user.entity.js';
-import { IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
-import { ITokenService } from '../../../src/domain/ports/token-service.port.js';
+import { type IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
+import { type ITokenService } from '../../../src/domain/ports/token-service.port.js';
 
 describe('RefreshTokenUseCase (Unit)', () => {
   let useCase: RefreshTokenUseCase;
@@ -14,9 +17,11 @@ describe('RefreshTokenUseCase (Unit)', () => {
     mockUserRepo = {
       findByEmail: vi.fn(),
       findById: vi.fn(),
+      findCourierById: vi.fn(),
       findCourierByUserId: vi.fn(),
       saveCustomer: vi.fn(),
       saveCourier: vi.fn(),
+      updateCourierVerification: vi.fn(),
     };
 
     mockTokenService = {
@@ -60,9 +65,9 @@ describe('RefreshTokenUseCase (Unit)', () => {
   it('should throw InvalidTokenException when refresh token verification fails', async () => {
     vi.mocked(mockTokenService.verifyRefreshToken).mockRejectedValue(new InvalidTokenException());
 
-    await expect(
-      useCase.execute({ refreshToken: 'expired_refresh_token' }),
-    ).rejects.toThrow(InvalidTokenException);
+    await expect(useCase.execute({ refreshToken: 'expired_refresh_token' })).rejects.toThrow(
+      InvalidTokenException,
+    );
   });
 
   it('should throw UserNotFoundException if user has been deleted', async () => {
@@ -74,8 +79,8 @@ describe('RefreshTokenUseCase (Unit)', () => {
 
     vi.mocked(mockUserRepo.findById).mockResolvedValue(null);
 
-    await expect(
-      useCase.execute({ refreshToken: 'valid_refresh_token' }),
-    ).rejects.toThrow(UserNotFoundException);
+    await expect(useCase.execute({ refreshToken: 'valid_refresh_token' })).rejects.toThrow(
+      UserNotFoundException,
+    );
   });
 });

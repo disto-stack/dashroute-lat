@@ -4,11 +4,8 @@ import {
   USER_REPOSITORY_PORT,
   type IUserRepository,
 } from '../../domain/ports/user-repository.port.js';
-import {
-  TOKEN_SERVICE_PORT,
-  type ITokenService,
-} from '../../domain/ports/token-service.port.js';
-import { RefreshTokenDto } from '../dto/refresh-token.dto.js';
+import { TOKEN_SERVICE_PORT, type ITokenService } from '../../domain/ports/token-service.port.js';
+import { type RefreshTokenDto } from '../dto/refresh-token.dto.js';
 
 @Injectable()
 export class RefreshTokenUseCase {

@@ -1,5 +1,5 @@
-import { User } from '../entities/user.entity.js';
-import { Courier, VehicleType } from '../entities/courier.entity.js';
+import { type User } from '../entities/user.entity.js';
+import { type Courier, type VehicleType } from '../entities/courier.entity.js';
 
 export const USER_REPOSITORY_PORT = Symbol('USER_REPOSITORY_PORT');
 
@@ -18,4 +18,3 @@ export interface IUserRepository {
   saveCourier(user: User, courier: CreateCourierParams): Promise<{ user: User; courier: Courier }>;
   updateCourierVerification(courierId: string, isVerified: boolean): Promise<Courier | null>;
 }
-

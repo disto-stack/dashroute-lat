@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LoginUseCase } from '../../../src/application/use-cases/login.use-case.js';
 import { InvalidCredentialsException } from '../../../src/domain/exceptions/domain.exceptions.js';
 import { User } from '../../../src/domain/entities/user.entity.js';
-import { IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
-import { IPasswordHasher } from '../../../src/domain/ports/password-hasher.port.js';
-import { ITokenService } from '../../../src/domain/ports/token-service.port.js';
+import { type IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
+import { type IPasswordHasher } from '../../../src/domain/ports/password-hasher.port.js';
+import { type ITokenService } from '../../../src/domain/ports/token-service.port.js';
 
 describe('LoginUseCase (Unit)', () => {
   let useCase: LoginUseCase;
@@ -16,9 +16,11 @@ describe('LoginUseCase (Unit)', () => {
     mockUserRepo = {
       findByEmail: vi.fn(),
       findById: vi.fn(),
+      findCourierById: vi.fn(),
       findCourierByUserId: vi.fn(),
       saveCustomer: vi.fn(),
       saveCourier: vi.fn(),
+      updateCourierVerification: vi.fn(),
     };
 
     mockHasher = {

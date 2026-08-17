@@ -1,10 +1,5 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpStatus,
-} from '@nestjs/common';
-import { Response } from 'express';
+import { type ExceptionFilter, Catch, type ArgumentsHost, HttpStatus } from '@nestjs/common';
+import { type Response } from 'express';
 import {
   DomainException,
   UserAlreadyExistsException,
