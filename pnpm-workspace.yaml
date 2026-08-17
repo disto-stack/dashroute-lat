@@ -1,5 +1,5 @@
 packages:
-  - 'packages/ts-*'
+  - 'packages/*'
   - 'services/*'
   - '!packages/go-*'
   - '!services/dispatch-engine'

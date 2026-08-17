@@ -1,25 +1,34 @@
-.PHONY: help install infra-up infra-down test lint build dev-auth
+.PHONY: help install infra-up infra-down test lint lint-fix format format-check build dev-auth
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-infra-up:
+infra-up: ## Start local infrastructure containers (Postgres, Redis, RabbitMQ, Swagger)
 	docker compose up -d
 
-infra-down:
+infra-down: ## Stop all local infrastructure containers
 	docker compose down
 
-install:
+install: ## Install dependencies across all workspaces
 	pnpm install
 	@if [ -f go.work ]; then go work sync; fi
 
-test:
+test: ## Run test suites across all services
 	pnpm -r --filter=!./services/dispatch-engine test
 	@if [ -f go.work ]; then (cd packages/go-contracts && go test ./...) && (cd services/dispatch-engine && go test ./...); fi
 
-lint:
+lint: ## Run linting on TypeScript and Go services
 	pnpm -r --filter=!./services/dispatch-engine lint
-	@if command -v golangci-lint >/dev/null 2>&1; then (cd packages/go-contracts && golangci-lint run) && (cd services/dispatch-engine && golangci-lint run); fi
+	@if command -v golangci-lint >/dev/null 2>&1; then golangci-lint run; fi
+
+lint-fix: ## Auto-fix lint issues on TypeScript services
+	pnpm -r --filter=!./services/dispatch-engine lint:fix
+
+format: ## Format codebase with Prettier
+	pnpm format
+
+format-check: ## Check formatting with Prettier
+	pnpm format:check
 
 build:
 	pnpm -r --filter=!./services/dispatch-engine build
