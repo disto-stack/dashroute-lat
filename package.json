@@ -7,10 +7,20 @@
     "build": "pnpm -r --filter=!./services/dispatch-engine build",
     "test": "pnpm -r --filter=!./services/dispatch-engine test",
     "lint": "pnpm -r --filter=!./services/dispatch-engine lint",
+    "lint:fix": "pnpm -r --filter=!./services/dispatch-engine lint:fix",
+    "format": "prettier --write \"**/*.{ts,js,json,yaml,yml,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,js,json,yaml,yml,md}\"",
     "dev:auth": "pnpm --filter auth-service dev"
   },
   "packageManager": "pnpm@9.15.0",
+  "pnpm": {
+    "overrides": {
+      "typescript": "^5.8.3"
+    }
+  },
   "devDependencies": {
-    "typescript": "^7.0.2"
+    "@dashroute/prettier-config": "workspace:*",
+    "prettier": "^3.9.6",
+    "typescript": "^5.8.3"
   }
 }

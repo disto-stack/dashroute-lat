@@ -21,30 +21,30 @@ Adopt the following technical stack for `Auth Service`:
 
 ### 1. Application Framework: **NestJS (Clean Architecture)**
 
-* Use NestJS as the host framework providing modular architecture, dependency injection (IoC container), and declarative security constructs (`@UseGuards(JwtAuthGuard, RolesGuard)`, `@Roles()`, `@CurrentUser()`).
-* Domain entities, use cases, and repository interfaces remain framework-agnostic, wired via NestJS Providers.
+- Use NestJS as the host framework providing modular architecture, dependency injection (IoC container), and declarative security constructs (`@UseGuards(JwtAuthGuard, RolesGuard)`, `@Roles()`, `@CurrentUser()`).
+- Domain entities, use cases, and repository interfaces remain framework-agnostic, wired via NestJS Providers.
 
 ### 2. Relational Data Access Layer: **Drizzle ORM (`drizzle-orm/node-postgres`)**
 
-* Adopt **Drizzle ORM** paired with `node-postgres` (`pg` connection pool).
-* **Why Drizzle over Prisma / TypeORM:**
-  * **Zero Runtime Overhead:** Drizzle operates as a lightweight, type-safe SQL query builder rather than a heavy ORM engine, delivering near-raw SQL execution speeds.
-  * **Seamless Harmony with SQL Migrations:** Drizzle does not force its own migration engine; TypeScript schemas mirror existing PostgreSQL tables and enums (`user_role`, `vehicle_type`) created in `db/migrations/`.
-  * **Compile-Time Type Safety:** Full end-to-end type inference for query results, filtering, joins, and transactional blocks (`db.transaction(...)`).
+- Adopt **Drizzle ORM** paired with `node-postgres` (`pg` connection pool).
+- **Why Drizzle over Prisma / TypeORM:**
+  - **Zero Runtime Overhead:** Drizzle operates as a lightweight, type-safe SQL query builder rather than a heavy ORM engine, delivering near-raw SQL execution speeds.
+  - **Seamless Harmony with SQL Migrations:** Drizzle does not force its own migration engine; TypeScript schemas mirror existing PostgreSQL tables and enums (`user_role`, `vehicle_type`) created in `db/migrations/`.
+  - **Compile-Time Type Safety:** Full end-to-end type inference for query results, filtering, joins, and transactional blocks (`db.transaction(...)`).
 
 ### 3. Cryptography & Security
 
-* **Password Hashing:** Use **Argon2** (Argon2id variant), the winner of the Password Hashing Competition and OWASP-recommended algorithm for modern password storage.
-* **Token Management:** Use stateless JSON Web Tokens (JWT) signed with HMAC-SHA256 / RSA containing user identity, active role (`CUSTOMER`, `COURIER`, `DISPATCHER`, `ADMIN`), and courier associations.
+- **Password Hashing:** Use **Argon2** (Argon2id variant), the winner of the Password Hashing Competition and OWASP-recommended algorithm for modern password storage.
+- **Token Management:** Use stateless JSON Web Tokens (JWT) signed with HMAC-SHA256 / RSA containing user identity, active role (`CUSTOMER`, `COURIER`, `DISPATCHER`, `ADMIN`), and courier associations.
 
 ## Consequences
 
 ### Positive
 
-* **Predictable & Fast SQL:** Direct mapping to PostgreSQL queries with zero query bloat or hidden overhead.
-* **Non-Conflicting Migration Strategy:** Drizzle acts purely as a type-safe query interface, preserving `golang-migrate` as the single source of database evolution truth.
-* **Robust RBAC & Testing:** NestJS guards combined with Clean Architecture allow testing business rules with lightweight mocks in milliseconds.
+- **Predictable & Fast SQL:** Direct mapping to PostgreSQL queries with zero query bloat or hidden overhead.
+- **Non-Conflicting Migration Strategy:** Drizzle acts purely as a type-safe query interface, preserving `golang-migrate` as the single source of database evolution truth.
+- **Robust RBAC & Testing:** NestJS guards combined with Clean Architecture allow testing business rules with lightweight mocks in milliseconds.
 
 ### Negative
 
-* **Schema Mirroring:** Drizzle TypeScript table definitions (`schema.ts`) must be kept synchronized with raw SQL migrations.
+- **Schema Mirroring:** Drizzle TypeScript table definitions (`schema.ts`) must be kept synchronized with raw SQL migrations.

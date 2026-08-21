@@ -7,9 +7,7 @@ import {
 
 @Injectable()
 export class GetProfileUseCase {
-  constructor(
-    @Inject(USER_REPOSITORY_PORT) private readonly userRepo: IUserRepository,
-  ) {}
+  constructor(@Inject(USER_REPOSITORY_PORT) private readonly userRepo: IUserRepository) {}
 
   async execute(userId: string) {
     const user = await this.userRepo.findById(userId);

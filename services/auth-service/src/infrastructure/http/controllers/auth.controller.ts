@@ -18,24 +18,24 @@ import { RefreshTokenUseCase } from '../../../application/use-cases/refresh-toke
 import { GetProfileUseCase } from '../../../application/use-cases/get-profile.use-case.js';
 import { VerifyCourierUseCase } from '../../../application/use-cases/verify-courier.use-case.js';
 import {
-  RegisterCustomerDto,
+  type RegisterCustomerDto,
   registerCustomerSchema,
 } from '../../../application/dto/register-customer.dto.js';
 import {
-  RegisterCourierDto,
+  type RegisterCourierDto,
   registerCourierSchema,
 } from '../../../application/dto/register-courier.dto.js';
-import { LoginDto, loginSchema } from '../../../application/dto/login.dto.js';
+import { type LoginDto, loginSchema } from '../../../application/dto/login.dto.js';
 import {
-  RefreshTokenDto,
+  type RefreshTokenDto,
   refreshTokenSchema,
 } from '../../../application/dto/refresh-token.dto.js';
 import {
-  VerifyCourierDto,
+  type VerifyCourierDto,
   verifyCourierSchema,
 } from '../../../application/dto/verify-courier.dto.js';
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe.js';
-import { JwtAuthGuard, AuthenticatedUser } from '../guards/jwt-auth.guard.js';
+import { JwtAuthGuard, type AuthenticatedUser } from '../guards/jwt-auth.guard.js';
 import { RolesGuard } from '../guards/roles.guard.js';
 import { Roles } from '../decorators/roles.decorator.js';
 import { CurrentUser } from '../decorators/current-user.decorator.js';
@@ -61,9 +61,7 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  async register(
-    @Body(new ZodValidationPipe(registerCustomerSchema)) dto: RegisterCustomerDto,
-  ) {
+  async register(@Body(new ZodValidationPipe(registerCustomerSchema)) dto: RegisterCustomerDto) {
     return this.registerCustomerUseCase.execute(dto);
   }
 
@@ -83,9 +81,7 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  async refresh(
-    @Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto,
-  ) {
+  async refresh(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto) {
     return this.refreshTokenUseCase.execute(dto);
   }
 
@@ -114,4 +110,3 @@ export class AuthController {
     return { message: 'Successfully logged out' };
   }
 }
-

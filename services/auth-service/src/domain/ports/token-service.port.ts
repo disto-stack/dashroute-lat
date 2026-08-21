@@ -1,4 +1,4 @@
-import { UserRole } from '../entities/user.entity.js';
+import { type UserRole } from '../entities/user.entity.js';
 
 export const TOKEN_SERVICE_PORT = Symbol('TOKEN_SERVICE_PORT');
 

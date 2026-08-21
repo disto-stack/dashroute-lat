@@ -1,25 +1,9 @@
-import {
-  pgTable,
-  pgEnum,
-  varchar,
-  boolean,
-  timestamp,
-} from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, varchar, boolean, timestamp } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-export const userRoleEnum = pgEnum('user_role', [
-  'CUSTOMER',
-  'COURIER',
-  'DISPATCHER',
-  'ADMIN',
-]);
+export const userRoleEnum = pgEnum('user_role', ['CUSTOMER', 'COURIER', 'DISPATCHER', 'ADMIN']);
 
-export const vehicleTypeEnum = pgEnum('vehicle_type', [
-  'BICYCLE',
-  'MOTORCYCLE',
-  'CAR',
-  'VAN',
-]);
+export const vehicleTypeEnum = pgEnum('vehicle_type', ['BICYCLE', 'MOTORCYCLE', 'CAR', 'VAN']);
 
 export const users = pgTable('users', {
   id: varchar('id', { length: 32 }).primaryKey(),

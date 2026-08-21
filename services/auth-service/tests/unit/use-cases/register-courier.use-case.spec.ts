@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RegisterCourierUseCase } from '../../../src/application/use-cases/register-courier.use-case.js';
 import { UserAlreadyExistsException } from '../../../src/domain/exceptions/domain.exceptions.js';
-import { User } from '../../../src/domain/entities/user.entity.js';
+import { type User } from '../../../src/domain/entities/user.entity.js';
 import { Courier } from '../../../src/domain/entities/courier.entity.js';
-import { IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
-import { IPasswordHasher } from '../../../src/domain/ports/password-hasher.port.js';
-import { ITokenService } from '../../../src/domain/ports/token-service.port.js';
+import { type IUserRepository } from '../../../src/domain/ports/user-repository.port.js';
+import { type IPasswordHasher } from '../../../src/domain/ports/password-hasher.port.js';
+import { type ITokenService } from '../../../src/domain/ports/token-service.port.js';
 
 describe('RegisterCourierUseCase (Unit)', () => {
   let useCase: RegisterCourierUseCase;
@@ -17,6 +17,7 @@ describe('RegisterCourierUseCase (Unit)', () => {
     mockUserRepo = {
       findByEmail: vi.fn(),
       findById: vi.fn(),
+      findCourierById: vi.fn(),
       findCourierByUserId: vi.fn(),
       saveCustomer: vi.fn(),
       saveCourier: vi.fn((user, courierParams) => {
@@ -31,6 +32,7 @@ describe('RegisterCourierUseCase (Unit)', () => {
         });
         return Promise.resolve({ user, courier });
       }),
+      updateCourierVerification: vi.fn(),
     };
 
     mockHasher = {

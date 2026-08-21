@@ -10,11 +10,8 @@ import {
   PASSWORD_HASHER_PORT,
   type IPasswordHasher,
 } from '../../domain/ports/password-hasher.port.js';
-import {
-  TOKEN_SERVICE_PORT,
-  type ITokenService,
-} from '../../domain/ports/token-service.port.js';
-import { RegisterCustomerDto } from '../dto/register-customer.dto.js';
+import { TOKEN_SERVICE_PORT, type ITokenService } from '../../domain/ports/token-service.port.js';
+import { type RegisterCustomerDto } from '../dto/register-customer.dto.js';
 
 @Injectable()
 export class RegisterCustomerUseCase {

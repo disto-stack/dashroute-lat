@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CaslAbilityFactory } from '../../../src/infrastructure/casl/casl-ability.factory.js';
-import { AuthenticatedUser } from '../../../src/infrastructure/http/guards/jwt-auth.guard.js';
+import { type AuthenticatedUser } from '../../../src/infrastructure/http/guards/jwt-auth.guard.js';
 
 describe('CaslAbilityFactory (Unit)', () => {
   let factory: CaslAbilityFactory;

@@ -1,5 +1,5 @@
-import { Global, Module, OnApplicationShutdown, Inject } from '@nestjs/common';
-import pg from 'pg';
+import { Global, Module, type OnApplicationShutdown, Inject, Logger } from '@nestjs/common';
+import type pg from 'pg';
 import { databaseProviders, DRIZZLE_DB, PG_POOL } from './database.provider.js';
 import { USER_REPOSITORY_PORT } from '../../domain/ports/user-repository.port.js';
 import { DrizzleUserRepository } from './repositories/drizzle-user.repository.js';
@@ -19,8 +19,7 @@ export class DatabaseModule implements OnApplicationShutdown {
   constructor(@Inject(PG_POOL) private pool: pg.Pool) {}
 
   async onApplicationShutdown() {
-    console.log('🔒 Closing PostgreSQL database connection pool...');
+    Logger.log('🔒 Closing PostgreSQL database connection pool...', 'DatabaseModule');
     await this.pool.end();
   }
 }
-

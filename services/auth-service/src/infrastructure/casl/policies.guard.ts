@@ -1,8 +1,14 @@
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException, Inject } from '@nestjs/common';
+import {
+  type CanActivate,
+  type ExecutionContext,
+  Injectable,
+  ForbiddenException,
+  Inject,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { CaslAbilityFactory, AppAbility } from './casl-ability.factory.js';
-import { CHECK_POLICIES_KEY, PolicyHandler } from './check-policies.decorator.js';
-import { AuthenticatedUser } from '../http/guards/jwt-auth.guard.js';
+import { CaslAbilityFactory, type AppAbility } from './casl-ability.factory.js';
+import { CHECK_POLICIES_KEY, type PolicyHandler } from './check-policies.decorator.js';
+import { type AuthenticatedUser } from '../http/guards/jwt-auth.guard.js';
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {

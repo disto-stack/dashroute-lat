@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { type INestApplication } from '@nestjs/common';
 import argon2 from 'argon2';
 import { AppModule } from '../../src/app.module.js';
 import { DRIZZLE_DB, PG_POOL } from '../../src/infrastructure/database/database.provider.js';
@@ -28,9 +28,9 @@ describe('Auth Service Endpoints (Clean Architecture Integration)', () => {
         findFirst: async () => mockCouriers[0] || null,
       },
     },
-    update: (table: any) => ({
+    update: (_table: any) => ({
       set: (val: any) => ({
-        where: (cond: any) => ({
+        where: (_cond: any) => ({
           returning: async () => {
             if (mockCouriers[0]) {
               mockCouriers[0] = { ...mockCouriers[0], ...val };
@@ -41,7 +41,7 @@ describe('Auth Service Endpoints (Clean Architecture Integration)', () => {
         }),
       }),
     }),
-    insert: (table: any) => ({
+    insert: (_table: any) => ({
       values: (val: any) => ({
         returning: async () => {
           const item = { ...val, createdAt: new Date(), updatedAt: new Date() };
@@ -52,7 +52,7 @@ describe('Auth Service Endpoints (Clean Architecture Integration)', () => {
     }),
     transaction: async (cb: any) => {
       const tx = {
-        insert: (table: any) => ({
+        insert: (_table: any) => ({
           values: (val: any) => ({
             returning: async () => {
               const item = { ...val, createdAt: new Date(), updatedAt: new Date() };
@@ -97,9 +97,7 @@ describe('Auth Service Endpoints (Clean Architecture Integration)', () => {
       fullName: 'Customer Test',
     };
 
-    const res = await request(app.getHttpServer())
-      .post('/auth/register')
-      .send(payload);
+    const res = await request(app.getHttpServer()).post('/auth/register').send(payload);
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('accessToken');
@@ -120,9 +118,7 @@ describe('Auth Service Endpoints (Clean Architecture Integration)', () => {
       plateNumber: 'ABC-123',
     };
 
-    const res = await request(app.getHttpServer())
-      .post('/auth/register/courier')
-      .send(payload);
+    const res = await request(app.getHttpServer()).post('/auth/register/courier').send(payload);
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('accessToken');
@@ -146,9 +142,7 @@ describe('Auth Service Endpoints (Clean Architecture Integration)', () => {
       fullName: 'Test User',
     };
 
-    const res = await request(app.getHttpServer())
-      .post('/auth/register')
-      .send(payload);
+    const res = await request(app.getHttpServer()).post('/auth/register').send(payload);
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('message', 'Validation failed');
@@ -162,9 +156,7 @@ describe('Auth Service Endpoints (Clean Architecture Integration)', () => {
       fullName: 'Test User',
     };
 
-    const res = await request(app.getHttpServer())
-      .post('/auth/register')
-      .send(payload);
+    const res = await request(app.getHttpServer()).post('/auth/register').send(payload);
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('message', 'Validation failed');

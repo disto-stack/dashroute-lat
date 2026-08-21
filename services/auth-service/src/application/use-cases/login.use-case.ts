@@ -8,11 +8,8 @@ import {
   PASSWORD_HASHER_PORT,
   type IPasswordHasher,
 } from '../../domain/ports/password-hasher.port.js';
-import {
-  TOKEN_SERVICE_PORT,
-  type ITokenService,
-} from '../../domain/ports/token-service.port.js';
-import { LoginDto } from '../dto/login.dto.js';
+import { TOKEN_SERVICE_PORT, type ITokenService } from '../../domain/ports/token-service.port.js';
+import { type LoginDto } from '../dto/login.dto.js';
 
 @Injectable()
 export class LoginUseCase {

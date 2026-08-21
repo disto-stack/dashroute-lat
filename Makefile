@@ -1,4 +1,4 @@
-.PHONY: help install infra-up infra-down test lint build dev-auth
+.PHONY: help install infra-up infra-down test lint lint-fix format format-check build dev-auth
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -19,7 +19,16 @@ test:
 
 lint:
 	pnpm -r --filter=!./services/dispatch-engine lint
-	@if command -v golangci-lint >/dev/null 2>&1; then (cd packages/go-contracts && golangci-lint run) && (cd services/dispatch-engine && golangci-lint run); fi
+	@if command -v golangci-lint >/dev/null 2>&1; then golangci-lint run; fi
+
+lint-fix:
+	pnpm -r --filter=!./services/dispatch-engine lint:fix
+
+format:
+	pnpm format
+
+format-check:
+	pnpm format:check
 
 build:
 	pnpm -r --filter=!./services/dispatch-engine build

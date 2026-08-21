@@ -7,6 +7,7 @@ Accepted
 ## Context
 
 DashRoute operates as a polyglot microservices platform containing services and packages with distinct ecosystems:
+
 - **TypeScript / Node.js:** `auth-service`, `orders-service`, `audit-service`, and shared packages (`packages/ts-*`).
 - **Go 1.23:** High-performance workers and services (`dispatch-engine`, `geolocation-service` or auxiliary engines, and shared packages `packages/go-*`).
 

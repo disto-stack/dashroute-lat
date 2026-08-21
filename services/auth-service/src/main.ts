@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 
@@ -16,7 +17,7 @@ async function bootstrap() {
   app.enableCors();
   const port = process.env.PORT || 4001;
   await app.listen(port);
-  console.log(`🚀 [auth-service] (NestJS) running on port ${port}`);
+  Logger.log(`Auth Service running on port ${port}`, 'Bootstrap');
 }
 
 bootstrap();
