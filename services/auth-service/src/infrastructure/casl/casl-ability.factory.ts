@@ -43,7 +43,6 @@ export class CaslAbilityFactory {
       can('read', 'Courier');
       can('update', 'Courier');
     } else {
-      // CUSTOMER default
       can('read', 'User');
       can('update', 'User');
     }

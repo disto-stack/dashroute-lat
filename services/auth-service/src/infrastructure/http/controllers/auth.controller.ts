@@ -36,8 +36,9 @@ import {
 } from '../../../application/dto/verify-courier.dto.js';
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe.js';
 import { JwtAuthGuard, type AuthenticatedUser } from '../guards/jwt-auth.guard.js';
-import { RolesGuard } from '../guards/roles.guard.js';
-import { Roles } from '../decorators/roles.decorator.js';
+import { PoliciesGuard } from '../../casl/policies.guard.js';
+import { CheckPolicies } from '../../casl/check-policies.decorator.js';
+import { type AppAbility } from '../../casl/casl-ability.factory.js';
 import { CurrentUser } from '../decorators/current-user.decorator.js';
 import { DomainExceptionFilter } from '../filters/domain-exception.filter.js';
 
@@ -93,8 +94,8 @@ export class AuthController {
   }
 
   @Patch('couriers/:id/verify')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can('manage', 'all'))
   @HttpCode(HttpStatus.OK)
   async verifyCourier(
     @Param('id') courierId: string,

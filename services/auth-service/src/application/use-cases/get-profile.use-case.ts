@@ -16,11 +16,17 @@ export class GetProfileUseCase {
     }
 
     let courierProfile: any = null;
-    if (user.role === 'COURIER') {
-      const courier = await this.userRepo.findCourierByUserId(user.id);
-      if (courier) {
-        courierProfile = courier.toJSON();
-      }
+
+    if (user.role !== 'COURIER') {
+      return {
+        ...user.toJSON(),
+        courierProfile: undefined,
+      };
+    }
+
+    const courier = await this.userRepo.findCourierByUserId(user.id);
+    if (courier) {
+      courierProfile = courier.toJSON();
     }
 
     return {
