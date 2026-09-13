@@ -87,7 +87,7 @@ services:
     networks:
       - delivery_network
     environment:
-      URLS: "[{ url: 'specs/dashroute-unified.openapi.yaml', name: '🌟 DashRoute API (Unified Gateway)' }, { url: 'specs/dev/auth-service.openapi.yaml', name: '🛠️ [DEV ONLY] Auth Service (:4001)' }]"
+      URLS: "[{ url: 'specs/dashroute-unified.openapi.yaml', name: '🌟 DashRoute API (Unified Gateway)' }, { url: 'specs/dev/auth-service.openapi.yaml', name: '🛠️ [DEV ONLY] Auth Service (:4001)' }, { url: 'specs/dev/orders-service.openapi.yaml', name: '📦 [DEV ONLY] Orders Service (:4002)' }]"
     volumes:
       - ./docs/api:/usr/share/nginx/html/specs:ro
     ports:

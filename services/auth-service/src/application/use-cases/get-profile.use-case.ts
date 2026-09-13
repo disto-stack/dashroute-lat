@@ -4,6 +4,7 @@ import {
   USER_REPOSITORY_PORT,
   type IUserRepository,
 } from '../../domain/ports/user-repository.port.js';
+import { type CourierSubject } from '../../infrastructure/casl/casl-ability.factory.js';
 
 @Injectable()
 export class GetProfileUseCase {
@@ -15,7 +16,7 @@ export class GetProfileUseCase {
       throw new UserNotFoundException(userId);
     }
 
-    let courierProfile: any = null;
+    let courierProfile: CourierSubject | null = null;
 
     if (user.role !== 'COURIER') {
       return {
