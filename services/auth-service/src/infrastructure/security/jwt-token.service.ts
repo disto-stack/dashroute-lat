@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import {
   type ITokenService,
   type TokenPayload,
@@ -21,10 +22,16 @@ export class JwtTokenService implements ITokenService {
   private readonly jwtSecret: string;
   private readonly refreshSecret: string;
 
-  constructor(@Inject(JwtService) private readonly jwtService: JwtService) {
-    this.jwtSecret = process.env.JWT_SECRET || 'dashroute-default-jwt-secret-replace-in-prod';
+  constructor(
+    @Inject(JwtService) private readonly jwtService: JwtService,
+    @Inject(ConfigService) private readonly configService: ConfigService,
+  ) {
+    this.jwtSecret =
+      this.configService.get<string>('JWT_SECRET') ||
+      'dashroute-default-jwt-secret-replace-in-prod';
     this.refreshSecret =
-      process.env.JWT_REFRESH_SECRET || 'dashroute-default-refresh-secret-replace-in-prod';
+      this.configService.get<string>('JWT_REFRESH_SECRET') ||
+      'dashroute-default-refresh-secret-replace-in-prod';
   }
 
   async generateTokens(payload: TokenPayload): Promise<GeneratedTokens> {

@@ -3,10 +3,12 @@ import {
   type ExecutionContext,
   Injectable,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common';
 import { type Request } from 'express';
 
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
 export interface AuthenticatedUser {
   id: string;
@@ -17,6 +19,8 @@ export interface AuthenticatedUser {
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  constructor(@Inject(ConfigService) private configService: ConfigService) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
@@ -26,11 +30,10 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      const secret = process.env.JWT_SECRET || 'fallback-secret-for-dev';
-      const decoded = jwt.verify(token, secret) as any;
-      
-      const user: AuthenticatedUser = {
-        id: decoded.userId,
+      const secret = this.configService.get<string>('JWT_SECRET') || 'fallback-secret-for-dev';
+      const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
+            const user: AuthenticatedUser = {
+        id: decoded.sub || decoded.userId,
         email: decoded.email,
         role: decoded.role,
         courierId: decoded.courierId,

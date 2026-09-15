@@ -1,13 +1,13 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { type CreateOrderDto } from '../dto/create-order.dto.js';
-import { type RabbitMQPublisherService } from '../../infrastructure/messaging/rabbitmq-publisher.service.js';
+import { RabbitMQPublisherService } from '../../infrastructure/messaging/rabbitmq-publisher.service.js';
 import { ORDER_REPOSITORY_PORT, type IOrderRepository } from '../../domain/ports/order-repository.port.js';
 
 @Injectable()
 export class CreateOrderUseCase {
   constructor(
     @Inject(ORDER_REPOSITORY_PORT) private readonly orderRepository: IOrderRepository,
-    private readonly publisher: RabbitMQPublisherService
+    @Inject(RabbitMQPublisherService) private readonly publisher: RabbitMQPublisherService
   ) {}
 
   async execute(dto: CreateOrderDto, customerId: string) {

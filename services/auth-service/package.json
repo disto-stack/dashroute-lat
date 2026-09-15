@@ -22,6 +22,7 @@
   "dependencies": {
     "@casl/ability": "^7.0.1",
     "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^12.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-express": "^11.0.0",

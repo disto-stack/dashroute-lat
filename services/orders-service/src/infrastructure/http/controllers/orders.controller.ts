@@ -8,14 +8,17 @@ import { JwtAuthGuard, type AuthenticatedUser } from '../guards/jwt-auth.guard.j
 import { PoliciesGuard } from '../../casl/policies.guard.js';
 import { CheckPolicies } from '../../casl/check-policies.decorator.js';
 import { type AppAbility } from '../../casl/casl-ability.factory.js';
-import { Controller, Post, Body, UseGuards, UsePipes, Req, Get, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, UsePipes, Req, Get, Param, Query, Inject } from '@nestjs/common';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard, PoliciesGuard)
 export class OrdersController {
   constructor(
+    @Inject(CreateOrderUseCase)
     private readonly createOrderUseCase: CreateOrderUseCase,
+    @Inject(GetOrdersUseCase)
     private readonly getOrdersUseCase: GetOrdersUseCase,
+    @Inject(GetOrderByIdUseCase)
     private readonly getOrderByIdUseCase: GetOrderByIdUseCase,
   ) {}
 
@@ -27,6 +30,7 @@ export class OrdersController {
   }
 
   @Get()
+  @CheckPolicies((ability: AppAbility) => ability.can('read', 'Order'))
   async getOrders(
     @Query(new ZodValidationPipe(getOrdersQuerySchema)) query: GetOrdersQueryDto,
     @Req() req: { user: AuthenticatedUser }
@@ -35,6 +39,7 @@ export class OrdersController {
   }
 
   @Get(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can('read', 'Order'))
   async getOrderById(
     @Param('id') id: string,
     @Req() req: { user: AuthenticatedUser }
