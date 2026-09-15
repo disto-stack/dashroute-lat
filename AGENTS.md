@@ -55,4 +55,11 @@ If you make any changes to a database table structure, column type, or entity sc
 - Authorization rules are distributed via **CASL**.
 - Business logic evaluating permissions should use CASL ability instances within the application use cases to maintain a clean architecture.
 
+## 8. Logging & Observability Standards
+
+- All application logging MUST be structured JSON following ADR 0011 (`pino` for Node.js, `zap` for Go).
+- **HTTP Controllers:** Do NOT add manual `logger.log` calls in controllers; request lifecycle and HTTP errors are automatically logged by `pino-http`.
+- **Use Cases & Domain Logic:** Log key business events (`info`), domain warnings (`warn`), and unrecoverable integration failures (`error`).
+- **Error Formatting:** Always pass the stack trace as the second argument: `this.logger.error(message, (error as Error).stack)`. Never log raw credentials, JWTs, or passwords.
+
 By reading this `AGENTS.md` file, you acknowledge and agree to enforce these boundaries. Happy coding!

@@ -23,9 +23,11 @@ export class RabbitMQConsumerService {
       const parsedMsg = deliveryAssignedEventSchema.parse(msg);
       await this.processOrderAssignedUseCase.execute(parsedMsg);
     } catch (error) {
-      this.logger.error('Failed to process delivery.assigned event', error);
+      const err = error as Error;
+      this.logger.error(`Failed to process delivery.assigned event: ${err.message}`, err.stack);
       // NOTE: With golevelup, we can return a Nack to put it in a DLQ if needed.
       // For now, we just catch and log to avoid endless loops.
     }
+
   }
 }

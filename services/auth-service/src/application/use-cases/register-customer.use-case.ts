@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import crypto from 'node:crypto';
 import { User } from '../../domain/entities/user.entity.js';
 import { UserAlreadyExistsException } from '../../domain/exceptions/domain.exceptions.js';
@@ -15,6 +15,8 @@ import { type RegisterCustomerDto } from '../dto/register-customer.dto.js';
 
 @Injectable()
 export class RegisterCustomerUseCase {
+  private readonly logger = new Logger(RegisterCustomerUseCase.name);
+
   constructor(
     @Inject(USER_REPOSITORY_PORT) private readonly userRepo: IUserRepository,
     @Inject(PASSWORD_HASHER_PORT) private readonly hasher: IPasswordHasher,
@@ -22,8 +24,10 @@ export class RegisterCustomerUseCase {
   ) {}
 
   async execute(dto: RegisterCustomerDto) {
-    const existing = await this.userRepo.findByEmail(dto.email.toLowerCase().trim());
+    const formattedEmail = dto.email.toLowerCase().trim();
+    const existing = await this.userRepo.findByEmail(formattedEmail);
     if (existing) {
+      this.logger.warn(`Registration failed: User already exists with email ${formattedEmail}`);
       throw new UserAlreadyExistsException(dto.email);
     }
 
@@ -33,7 +37,7 @@ export class RegisterCustomerUseCase {
 
     const user = new User({
       id: userId,
-      email: dto.email.toLowerCase().trim(),
+      email: formattedEmail,
       passwordHash,
       fullName: dto.fullName.trim(),
       role: 'CUSTOMER',
@@ -42,6 +46,8 @@ export class RegisterCustomerUseCase {
     });
 
     const savedUser = await this.userRepo.saveCustomer(user);
+
+    this.logger.log(`New CUSTOMER user registered successfully: ${savedUser.id} (${savedUser.email})`);
 
     const tokens = await this.tokenService.generateTokens({
       userId: savedUser.id,
@@ -55,3 +61,4 @@ export class RegisterCustomerUseCase {
     };
   }
 }
+

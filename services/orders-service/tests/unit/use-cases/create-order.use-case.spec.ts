@@ -48,4 +48,19 @@ describe('CreateOrderUseCase', () => {
     });
     expect(mockPublisher.publish).toHaveBeenCalledWith('order.created', result);
   });
+
+  it('should log error and rethrow when publisher fails', async () => {
+    mockPublisher.publish.mockImplementationOnce(() => {
+      throw new Error('RabbitMQ connection lost');
+    });
+
+    const dto = {
+      pickupLocation: { lat: 40, lng: -74 },
+      dropoffLocation: { lat: 41, lng: -75 },
+    };
+    const customerId = randomUUID();
+
+    await expect(useCase.execute(dto, customerId)).rejects.toThrow('RabbitMQ connection lost');
+  });
 });
+
