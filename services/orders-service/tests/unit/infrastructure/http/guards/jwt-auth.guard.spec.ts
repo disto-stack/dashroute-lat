@@ -4,7 +4,10 @@ import { UnauthorizedException, type ExecutionContext } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
 describe('JwtAuthGuard', () => {
-  const guard = new JwtAuthGuard();
+  const mockConfigService = {
+    get: (key: string) => key === 'JWT_SECRET' ? 'fallback-secret-for-dev' : null,
+  };
+  const guard = new JwtAuthGuard(mockConfigService as any);
   const secret = 'fallback-secret-for-dev';
 
   const createMockContext = (authHeader?: string) => {
