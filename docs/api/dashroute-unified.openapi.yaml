@@ -695,3 +695,17 @@ components:
         updatedAt:
           type: string
           format: date-time
+
+  responses:
+    BadRequestError:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationErrorResponse'
+    UnauthorizedError:
+      description: Unauthorized. Missing or invalid token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
