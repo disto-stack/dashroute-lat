@@ -24,12 +24,15 @@ import { JwtAuthGuard } from './infrastructure/http/guards/jwt-auth.guard.js';
           serviceName: 'orders-service',
           environment: process.env.NODE_ENV || 'development',
         }),
-        genReqId: (req) => (req.headers['x-request-id'] as string) || (req.headers['x-trace-id'] as string) || crypto.randomUUID(),
+        genReqId: (req) =>
+          (req.headers['x-request-id'] as string) ||
+          (req.headers['x-trace-id'] as string) ||
+          crypto.randomUUID(),
       },
     }),
-    DatabaseModule, 
-    CaslModule, 
-    RabbitMQModule
+    DatabaseModule,
+    CaslModule,
+    RabbitMQModule,
   ],
   controllers: [OrdersController],
   providers: [
@@ -41,4 +44,3 @@ import { JwtAuthGuard } from './infrastructure/http/guards/jwt-auth.guard.js';
   ],
 })
 export class AppModule {}
-

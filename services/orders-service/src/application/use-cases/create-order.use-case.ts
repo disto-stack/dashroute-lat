@@ -1,7 +1,10 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { type CreateOrderDto } from '../dto/create-order.dto.js';
 import { RabbitMQPublisherService } from '../../infrastructure/messaging/rabbitmq-publisher.service.js';
-import { ORDER_REPOSITORY_PORT, type IOrderRepository } from '../../domain/ports/order-repository.port.js';
+import {
+  ORDER_REPOSITORY_PORT,
+  type IOrderRepository,
+} from '../../domain/ports/order-repository.port.js';
 
 @Injectable()
 export class CreateOrderUseCase {
@@ -9,7 +12,7 @@ export class CreateOrderUseCase {
 
   constructor(
     @Inject(ORDER_REPOSITORY_PORT) private readonly orderRepository: IOrderRepository,
-    @Inject(RabbitMQPublisherService) private readonly publisher: RabbitMQPublisherService
+    @Inject(RabbitMQPublisherService) private readonly publisher: RabbitMQPublisherService,
   ) {}
 
   async execute(dto: CreateOrderDto, customerId: string) {
@@ -26,11 +29,13 @@ export class CreateOrderUseCase {
       this.publisher.publish('order.created', newOrder);
     } catch (error) {
       const err = error as Error;
-      this.logger.error(`Failed to publish 'order.created' event for order ${newOrder.id}`, err.stack);
+      this.logger.error(
+        `Failed to publish 'order.created' event for order ${newOrder.id}`,
+        err.stack,
+      );
       throw error;
     }
 
     return newOrder;
   }
 }
-

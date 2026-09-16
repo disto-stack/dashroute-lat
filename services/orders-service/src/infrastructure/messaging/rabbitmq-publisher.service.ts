@@ -1,5 +1,6 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import crypto from 'node:crypto';
 
 @Injectable()
 export class RabbitMQPublisherService {
@@ -9,7 +10,15 @@ export class RabbitMQPublisherService {
   constructor(@Inject(AmqpConnection) private readonly amqpConnection: AmqpConnection) {}
 
   publish(routingKey: string, message: unknown) {
-    this.amqpConnection.publish(this.exchange, routingKey, message);
-    this.logger.debug(`Published message to ${routingKey}`);
+    const envelope = {
+      event_id: crypto.randomUUID(),
+      event_type: routingKey,
+      occurred_at: new Date().toISOString(),
+      version: '1.0',
+      producer: 'orders-service',
+      payload: message,
+    };
+    this.amqpConnection.publish(this.exchange, routingKey, envelope);
+    this.logger.debug(`Published event envelope for ${routingKey}`);
   }
 }

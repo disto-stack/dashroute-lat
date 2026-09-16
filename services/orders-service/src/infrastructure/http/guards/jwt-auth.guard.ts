@@ -21,7 +21,7 @@ export interface AuthenticatedUser {
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   private readonly logger = new Logger(JwtAuthGuard.name);
-  
+
   constructor(@Inject(ConfigService) private configService: ConfigService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -35,7 +35,7 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const secret = this.configService.get<string>('JWT_SECRET') || 'fallback-secret-for-dev';
       const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
-            const user: AuthenticatedUser = {
+      const user: AuthenticatedUser = {
         id: decoded.sub || decoded.userId,
         email: decoded.email,
         role: decoded.role,

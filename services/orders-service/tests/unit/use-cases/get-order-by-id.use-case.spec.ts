@@ -18,7 +18,7 @@ describe('GetOrderByIdUseCase', () => {
     { lat: 0, lng: 0 },
     { lat: 1, lng: 1 },
     new Date(),
-    new Date()
+    new Date(),
   );
 
   const mockUser: AuthenticatedUser = {
@@ -37,7 +37,7 @@ describe('GetOrderByIdUseCase', () => {
 
     useCase = new GetOrderByIdUseCase(
       mockRepo as unknown as IOrderRepository,
-      mockCaslFactory as unknown as CaslAbilityFactory
+      mockCaslFactory as unknown as CaslAbilityFactory,
     );
   });
 

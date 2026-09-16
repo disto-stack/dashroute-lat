@@ -28,7 +28,9 @@ describe('DrizzleOrderRepository (Integration)', () => {
       db = drizzle(pool, { schema });
       repository = new DrizzleOrderRepository(db);
     } catch {
-      console.warn('PostgreSQL is not reachable. Integration tests for DrizzleOrderRepository will be skipped.');
+      console.warn(
+        'PostgreSQL is not reachable. Integration tests for DrizzleOrderRepository will be skipped.',
+      );
       isDbAvailable = false;
     }
   });
@@ -42,7 +44,7 @@ describe('DrizzleOrderRepository (Integration)', () => {
   const ensureUser = async (userId: string) => {
     await pool.query(
       `INSERT INTO users (id, email, password_hash, full_name, role) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING`,
-      [userId, `${userId}@test.com`, 'hash', 'Test User', 'CUSTOMER']
+      [userId, `${userId}@test.com`, 'hash', 'Test User', 'CUSTOMER'],
     );
   };
 
@@ -72,7 +74,7 @@ describe('DrizzleOrderRepository (Integration)', () => {
     await ensureUser(userId);
     await pool.query(
       `INSERT INTO couriers (id, user_id, vehicle_type) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`,
-      [courierId, userId, 'MOTORCYCLE']
+      [courierId, userId, 'MOTORCYCLE'],
     );
   };
 
@@ -82,7 +84,7 @@ describe('DrizzleOrderRepository (Integration)', () => {
     const customerId = 'usr_' + randomUUID().replace(/-/g, '').slice(0, 24);
     const courierUserId = 'usr_' + randomUUID().replace(/-/g, '').slice(0, 24);
     const courierId = 'cur_' + randomUUID().replace(/-/g, '').slice(0, 24);
-    
+
     await ensureUser(customerId);
     await ensureCourier(courierId, courierUserId);
 

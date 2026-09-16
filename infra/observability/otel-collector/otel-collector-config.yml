@@ -13,14 +13,14 @@ processors:
 
 exporters:
   prometheus:
-    endpoint: "0.0.0.0:8889"
-    namespace: "dashroute"
+    endpoint: '0.0.0.0:8889'
+    namespace: 'dashroute'
 
   loki:
-    endpoint: "http://loki:3100/loki/api/v1/push"
+    endpoint: 'http://loki:3100/loki/api/v1/push'
 
   otlp/jaeger:
-    endpoint: "jaeger:4317"
+    endpoint: 'jaeger:4317'
     tls:
       insecure: true
 

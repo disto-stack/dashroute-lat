@@ -178,4 +178,4 @@ components:
                 example: 401
               message:
                 type: string
-                example: "Authentication token missing"
+                example: 'Authentication token missing'

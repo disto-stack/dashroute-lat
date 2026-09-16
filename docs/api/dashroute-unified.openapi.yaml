@@ -684,10 +684,10 @@ components:
           $ref: '#/components/schemas/LocationDto'
         totalAmount:
           type: string
-          example: "15.50"
+          example: '15.50'
         currency:
           type: string
-          example: "COP"
+          example: 'COP'
           maxLength: 3
         createdAt:
           type: string

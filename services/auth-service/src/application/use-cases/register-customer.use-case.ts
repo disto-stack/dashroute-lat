@@ -47,7 +47,9 @@ export class RegisterCustomerUseCase {
 
     const savedUser = await this.userRepo.saveCustomer(user);
 
-    this.logger.log(`New CUSTOMER user registered successfully: ${savedUser.id} (${savedUser.email})`);
+    this.logger.log(
+      `New CUSTOMER user registered successfully: ${savedUser.id} (${savedUser.email})`,
+    );
 
     const tokens = await this.tokenService.generateTokens({
       userId: savedUser.id,
@@ -61,4 +63,3 @@ export class RegisterCustomerUseCase {
     };
   }
 }
-

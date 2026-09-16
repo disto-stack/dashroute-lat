@@ -1,6 +1,12 @@
 import { pgTable, timestamp, varchar, jsonb } from 'drizzle-orm/pg-core';
 
-export const orderStatusEnum = ['PENDING', 'ASSIGNED', 'IN_TRANSIT', 'DELIVERED', 'CANCELLED'] as const;
+export const orderStatusEnum = [
+  'PENDING',
+  'ASSIGNED',
+  'IN_TRANSIT',
+  'DELIVERED',
+  'CANCELLED',
+] as const;
 export type OrderStatus = (typeof orderStatusEnum)[number];
 
 export const orders = pgTable('orders', {

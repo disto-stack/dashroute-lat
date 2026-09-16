@@ -6,9 +6,10 @@ Accepted
 
 ## Context
 
-DashRoute is a polyglot microservices system composed of Node.js/NestJS and Go services, communicating asynchronously via RabbitMQ and synchronously via HTTP/gRPC. 
+DashRoute is a polyglot microservices system composed of Node.js/NestJS and Go services, communicating asynchronously via RabbitMQ and synchronously via HTTP/gRPC.
 
 Without a standardized logging and observability strategy:
+
 - Logs are unformatted text or inconsistent console statements across languages, hindering automated parsing and centralized ingestion.
 - Cross-service transactions lack distributed correlation IDs (`traceId`), making root-cause debugging across service boundaries extremely difficult.
 - Metrics collection varies per service, preventing centralized system health monitoring.

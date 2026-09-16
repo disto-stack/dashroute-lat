@@ -25,7 +25,7 @@ describe('ProcessOrderAssignedUseCase', () => {
       { lat: 0, lng: 0 },
       { lat: 1, lng: 1 },
       new Date(),
-      new Date()
+      new Date(),
     );
 
     mockRepo.findById.mockResolvedValue(pendingOrder);
@@ -50,7 +50,7 @@ describe('ProcessOrderAssignedUseCase', () => {
     mockRepo.findById.mockResolvedValue(null);
 
     await expect(
-      useCase.execute({ orderId: 'non-existent', courierId: 'courier-1' })
+      useCase.execute({ orderId: 'non-existent', courierId: 'courier-1' }),
     ).rejects.toThrow(NotFoundException);
   });
 
@@ -62,13 +62,13 @@ describe('ProcessOrderAssignedUseCase', () => {
       { lat: 0, lng: 0 },
       { lat: 1, lng: 1 },
       new Date(),
-      new Date()
+      new Date(),
     );
 
     mockRepo.findById.mockResolvedValue(deliveredOrder);
 
-    await expect(
-      useCase.execute({ orderId: 'order-1', courierId: 'courier-999' })
-    ).rejects.toThrow(BadRequestException);
+    await expect(useCase.execute({ orderId: 'order-1', courierId: 'courier-999' })).rejects.toThrow(
+      BadRequestException,
+    );
   });
 });

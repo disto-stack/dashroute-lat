@@ -18,7 +18,11 @@ describe('CaslAbilityFactory', () => {
   });
 
   it('should grant CUSTOMER permission only for their own orders', () => {
-    const customer: AuthenticatedUser = { id: 'cust-123', email: 'user@test.com', role: 'CUSTOMER' };
+    const customer: AuthenticatedUser = {
+      id: 'cust-123',
+      email: 'user@test.com',
+      role: 'CUSTOMER',
+    };
     const ability = factory.createForUser(customer);
 
     expect(ability.can('create', 'Order')).toBe(true);
@@ -27,7 +31,11 @@ describe('CaslAbilityFactory', () => {
   });
 
   it('should grant COURIER permission only for assigned orders', () => {
-    const courier: AuthenticatedUser = { id: 'courier-888', email: 'courier@test.com', role: 'COURIER' };
+    const courier: AuthenticatedUser = {
+      id: 'courier-888',
+      email: 'courier@test.com',
+      role: 'COURIER',
+    };
     const ability = factory.createForUser(courier);
 
     expect(ability.can('read', otherOrder as any)).toBe(true);
