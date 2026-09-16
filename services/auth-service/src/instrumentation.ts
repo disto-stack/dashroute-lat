@@ -8,6 +8,8 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
 
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
+
 const serviceName = process.env.SERVICE_NAME || 'auth-service';
 const rawEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4317';
 const endpoint = rawEndpoint.replace(/^grpc:\/\//, 'http://');
@@ -29,7 +31,7 @@ const sdk = new NodeSDK({
       url: endpoint,
     }),
   }),
-  instrumentations: [getNodeAutoInstrumentations()],
+  instrumentations: [getNodeAutoInstrumentations(), new PinoInstrumentation()],
 });
 
 sdk.start();

@@ -31,5 +31,8 @@ export interface IOrderRepository {
   findById(id: string): Promise<Order | null>;
   findByCustomerId(customerId: string): Promise<Order[]>;
   updateStatus(id: string, status: Order['status'], courierId?: string): Promise<Order>;
-  search(criteria: OrderSearchCriteria, pagination: CursorPaginationParams): Promise<PaginatedResult<Order>>;
+  search(
+    criteria: OrderSearchCriteria,
+    pagination: CursorPaginationParams,
+  ): Promise<PaginatedResult<Order>>;
 }

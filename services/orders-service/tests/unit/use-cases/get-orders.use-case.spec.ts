@@ -32,7 +32,7 @@ describe('GetOrdersUseCase', () => {
       expect.objectContaining({
         customerId: 'customer-123',
       }),
-      { limit: 10, cursor: undefined }
+      { limit: 10, cursor: undefined },
     );
   });
 
@@ -45,7 +45,7 @@ describe('GetOrdersUseCase', () => {
 
     await useCase.execute(
       { limit: 20, customerId: 'customer-456', courierId: 'courier-789' },
-      adminUser
+      adminUser,
     );
 
     expect(mockRepo.search).toHaveBeenCalledWith(
@@ -54,7 +54,7 @@ describe('GetOrdersUseCase', () => {
         customerId: 'customer-456',
         courierId: 'courier-789',
       },
-      { limit: 20, cursor: undefined }
+      { limit: 20, cursor: undefined },
     );
   });
 
@@ -65,14 +65,11 @@ describe('GetOrdersUseCase', () => {
       role: 'ADMIN',
     };
 
-    await useCase.execute(
-      { limit: 5, cursor: 'base64cursor' },
-      adminUser
-    );
+    await useCase.execute({ limit: 5, cursor: 'base64cursor' }, adminUser);
 
-    expect(mockRepo.search).toHaveBeenCalledWith(
-      expect.anything(),
-      { limit: 5, cursor: 'base64cursor' }
-    );
+    expect(mockRepo.search).toHaveBeenCalledWith(expect.anything(), {
+      limit: 5,
+      cursor: 'base64cursor',
+    });
   });
 });

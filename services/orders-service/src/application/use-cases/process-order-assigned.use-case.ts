@@ -1,5 +1,8 @@
 import { Injectable, Inject, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { ORDER_REPOSITORY_PORT, type IOrderRepository } from '../../domain/ports/order-repository.port.js';
+import {
+  ORDER_REPOSITORY_PORT,
+  type IOrderRepository,
+} from '../../domain/ports/order-repository.port.js';
 import { type DeliveryAssignedEventDto } from '../dto/delivery-assigned-event.dto.js';
 
 import { InvalidStateTransitionException } from '../../domain/exceptions/invalid-state-transition.exception.js';
@@ -8,13 +11,13 @@ import { InvalidStateTransitionException } from '../../domain/exceptions/invalid
 export class ProcessOrderAssignedUseCase {
   private readonly logger = new Logger(ProcessOrderAssignedUseCase.name);
 
-  constructor(
-    @Inject(ORDER_REPOSITORY_PORT) private readonly orderRepository: IOrderRepository,
-  ) {}
+  constructor(@Inject(ORDER_REPOSITORY_PORT) private readonly orderRepository: IOrderRepository) {}
 
   async execute(event: DeliveryAssignedEventDto) {
-    this.logger.log(`Processing delivery.assigned event for order ${event.orderId} to courier ${event.courierId}`);
-    
+    this.logger.log(
+      `Processing delivery.assigned event for order ${event.orderId} to courier ${event.courierId}`,
+    );
+
     const order = await this.orderRepository.findById(event.orderId);
     if (!order) {
       this.logger.warn(`Order ${event.orderId} not found. Cannot assign courier.`);
@@ -37,7 +40,7 @@ export class ProcessOrderAssignedUseCase {
       order.courierId ?? undefined,
     );
     this.logger.log(`Order ${event.orderId} successfully updated to ASSIGNED`);
-    
+
     return updatedOrder;
   }
 }

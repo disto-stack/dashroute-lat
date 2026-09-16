@@ -27,7 +27,9 @@ export class RegisterCourierUseCase {
     const formattedEmail = dto.email.toLowerCase().trim();
     const existing = await this.userRepo.findByEmail(formattedEmail);
     if (existing) {
-      this.logger.warn(`Courier registration failed: User already exists with email ${formattedEmail}`);
+      this.logger.warn(
+        `Courier registration failed: User already exists with email ${formattedEmail}`,
+      );
       throw new UserAlreadyExistsException(dto.email);
     }
 
@@ -51,7 +53,9 @@ export class RegisterCourierUseCase {
       plateNumber: dto.plateNumber || null,
     });
 
-    this.logger.log(`New COURIER user registered successfully: ${result.user.id} with courierId ${result.courier.id}`);
+    this.logger.log(
+      `New COURIER user registered successfully: ${result.user.id} with courierId ${result.courier.id}`,
+    );
 
     const tokens = await this.tokenService.generateTokens({
       userId: result.user.id,
@@ -69,4 +73,3 @@ export class RegisterCourierUseCase {
     };
   }
 }
-

@@ -1,5 +1,8 @@
 import { Injectable, Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { ORDER_REPOSITORY_PORT, type IOrderRepository } from '../../domain/ports/order-repository.port.js';
+import {
+  ORDER_REPOSITORY_PORT,
+  type IOrderRepository,
+} from '../../domain/ports/order-repository.port.js';
 import { type AuthenticatedUser } from '../../infrastructure/http/guards/jwt-auth.guard.js';
 import { type CaslAbilityFactory } from '../../infrastructure/casl/casl-ability.factory.js';
 

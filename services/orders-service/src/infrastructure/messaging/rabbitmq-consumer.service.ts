@@ -8,9 +8,7 @@ import { deliveryAssignedEventSchema } from '../../application/dto/delivery-assi
 export class RabbitMQConsumerService {
   private readonly logger = new Logger(RabbitMQConsumerService.name);
 
-  constructor(
-    private readonly processOrderAssignedUseCase: ProcessOrderAssignedUseCase,
-  ) {}
+  constructor(private readonly processOrderAssignedUseCase: ProcessOrderAssignedUseCase) {}
 
   @RabbitSubscribe({
     exchange: 'dashroute.events',
@@ -28,6 +26,5 @@ export class RabbitMQConsumerService {
       // NOTE: With golevelup, we can return a Nack to put it in a DLQ if needed.
       // For now, we just catch and log to avoid endless loops.
     }
-
   }
 }

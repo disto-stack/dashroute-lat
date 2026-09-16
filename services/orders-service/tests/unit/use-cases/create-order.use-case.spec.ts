@@ -23,7 +23,7 @@ describe('CreateOrderUseCase', () => {
 
     useCase = new CreateOrderUseCase(
       mockRepo as unknown as IOrderRepository,
-      mockPublisher as unknown as RabbitMQPublisherService
+      mockPublisher as unknown as RabbitMQPublisherService,
     );
   });
 
@@ -39,7 +39,7 @@ describe('CreateOrderUseCase', () => {
     expect(result).toBeDefined();
     expect(result.customerId).toBe(customerId);
     expect(result.status).toBe('PENDING');
-    
+
     expect(mockRepo.create).toHaveBeenCalledWith({
       customerId,
       status: 'PENDING',
@@ -63,4 +63,3 @@ describe('CreateOrderUseCase', () => {
     await expect(useCase.execute(dto, customerId)).rejects.toThrow('RabbitMQ connection lost');
   });
 });
-

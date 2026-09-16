@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken';
 
 describe('JwtAuthGuard', () => {
   const mockConfigService = {
-    get: (key: string) => key === 'JWT_SECRET' ? 'fallback-secret-for-dev' : null,
+    get: (key: string) => (key === 'JWT_SECRET' ? 'fallback-secret-for-dev' : null),
   };
   const guard = new JwtAuthGuard(mockConfigService as any);
   const secret = 'fallback-secret-for-dev';
@@ -42,7 +42,7 @@ describe('JwtAuthGuard', () => {
     const { switchToHttp } = createMockContext();
 
     await expect(guard.canActivate({ switchToHttp } as ExecutionContext)).rejects.toThrow(
-      UnauthorizedException
+      UnauthorizedException,
     );
   });
 
@@ -51,7 +51,7 @@ describe('JwtAuthGuard', () => {
     const { switchToHttp } = createMockContext(`Bearer ${token}`);
 
     await expect(guard.canActivate({ switchToHttp } as ExecutionContext)).rejects.toThrow(
-      UnauthorizedException
+      UnauthorizedException,
     );
   });
 });

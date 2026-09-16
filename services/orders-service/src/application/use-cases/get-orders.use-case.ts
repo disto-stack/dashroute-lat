@@ -1,13 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ORDER_REPOSITORY_PORT, type IOrderRepository, type OrderSearchCriteria } from '../../domain/ports/order-repository.port.js';
+import {
+  ORDER_REPOSITORY_PORT,
+  type IOrderRepository,
+  type OrderSearchCriteria,
+} from '../../domain/ports/order-repository.port.js';
 import { type GetOrdersQueryDto } from '../dto/get-orders-query.dto.js';
 import { type AuthenticatedUser } from '../../infrastructure/http/guards/jwt-auth.guard.js';
 
 @Injectable()
 export class GetOrdersUseCase {
-  constructor(
-    @Inject(ORDER_REPOSITORY_PORT) private readonly orderRepository: IOrderRepository,
-  ) {}
+  constructor(@Inject(ORDER_REPOSITORY_PORT) private readonly orderRepository: IOrderRepository) {}
 
   async execute(query: GetOrdersQueryDto, user: AuthenticatedUser) {
     const criteria: OrderSearchCriteria = {
@@ -17,7 +19,7 @@ export class GetOrdersUseCase {
     if (user.role === 'CUSTOMER') {
       criteria.customerId = user.id;
     } else if (user.role === 'COURIER') {
-      criteria.courierId = user.id; 
+      criteria.courierId = user.id;
     } else if (user.role === 'ADMIN') {
       criteria.customerId = query.customerId;
       criteria.courierId = query.courierId;

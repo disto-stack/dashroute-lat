@@ -19,16 +19,18 @@ import { AuthHttpModule } from './infrastructure/http/auth-http.module.js';
           serviceName: 'auth-service',
           environment: process.env.NODE_ENV || 'development',
         }),
-        genReqId: (req) => (req.headers['x-request-id'] as string) || (req.headers['x-trace-id'] as string) || crypto.randomUUID(),
+        genReqId: (req) =>
+          (req.headers['x-request-id'] as string) ||
+          (req.headers['x-trace-id'] as string) ||
+          crypto.randomUUID(),
       },
     }),
-    DatabaseModule, 
-    SecurityModule, 
-    CaslModule, 
-    AuthHttpModule
+    DatabaseModule,
+    SecurityModule,
+    CaslModule,
+    AuthHttpModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {}
-

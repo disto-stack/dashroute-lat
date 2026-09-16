@@ -1,6 +1,17 @@
-import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { type IOrderRepository, type OrderSearchCriteria, type CursorPaginationParams, type PaginatedResult, type CreateOrderParams } from '../../../domain/ports/order-repository.port.js';
+import {
+  type IOrderRepository,
+  type OrderSearchCriteria,
+  type CursorPaginationParams,
+  type PaginatedResult,
+  type CreateOrderParams,
+} from '../../../domain/ports/order-repository.port.js';
 import { Order } from '../../../domain/entities/order.entity.js';
 import { DRIZZLE_DB, type DrizzleDb } from '../database.provider.js';
 import { orders } from '../schema.js';
@@ -13,13 +24,16 @@ export class DrizzleOrderRepository implements IOrderRepository {
   async create(orderData: CreateOrderParams): Promise<Order> {
     try {
       const orderId = 'ord_' + randomUUID().replace(/-/g, '').slice(0, 25);
-      const [inserted] = await this.db.insert(orders).values({
-        id: orderId,
-        customerId: orderData.customerId,
-        status: orderData.status,
-        pickupLocation: orderData.pickupLocation,
-        dropoffLocation: orderData.dropoffLocation,
-      }).returning();
+      const [inserted] = await this.db
+        .insert(orders)
+        .values({
+          id: orderId,
+          customerId: orderData.customerId,
+          status: orderData.status,
+          pickupLocation: orderData.pickupLocation,
+          dropoffLocation: orderData.dropoffLocation,
+        })
+        .returning();
 
       return this.mapToEntity(inserted);
     } catch (error) {
@@ -36,7 +50,7 @@ export class DrizzleOrderRepository implements IOrderRepository {
 
   async findByCustomerId(customerId: string): Promise<Order[]> {
     const rows = await this.db.select().from(orders).where(eq(orders.customerId, customerId));
-    return rows.map(row => this.mapToEntity(row));
+    return rows.map((row) => this.mapToEntity(row));
   }
 
   async updateStatus(id: string, status: Order['status'], courierId?: string): Promise<Order> {
@@ -45,7 +59,8 @@ export class DrizzleOrderRepository implements IOrderRepository {
       updateData.courierId = courierId;
     }
 
-    const [updated] = await this.db.update(orders)
+    const [updated] = await this.db
+      .update(orders)
       .set(updateData)
       .where(eq(orders.id, id))
       .returning();
@@ -66,11 +81,14 @@ export class DrizzleOrderRepository implements IOrderRepository {
       row.dropoffLocation,
       row.createdAt,
       row.updatedAt,
-      row.courierId
+      row.courierId,
     );
   }
 
-  async search(criteria: OrderSearchCriteria, pagination: CursorPaginationParams): Promise<PaginatedResult<Order>> {
+  async search(
+    criteria: OrderSearchCriteria,
+    pagination: CursorPaginationParams,
+  ): Promise<PaginatedResult<Order>> {
     const conditions = [];
 
     if (criteria.customerId) conditions.push(eq(orders.customerId, criteria.customerId));
@@ -83,8 +101,8 @@ export class DrizzleOrderRepository implements IOrderRepository {
       conditions.push(
         or(
           lt(orders.createdAt, createdAt),
-          and(eq(orders.createdAt, createdAt), lt(orders.id, id))
-        )
+          and(eq(orders.createdAt, createdAt), lt(orders.id, id)),
+        ),
       );
     }
 
@@ -102,8 +120,8 @@ export class DrizzleOrderRepository implements IOrderRepository {
     const hasNextPage = rows.length > limit;
     const paginatedRows = hasNextPage ? rows.slice(0, limit) : rows;
 
-    const data = paginatedRows.map(row => this.mapToEntity(row));
-    
+    const data = paginatedRows.map((row) => this.mapToEntity(row));
+
     let nextCursor = null;
     if (hasNextPage && data.length > 0) {
       const lastItem = data[data.length - 1];

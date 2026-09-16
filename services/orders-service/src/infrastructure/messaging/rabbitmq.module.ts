@@ -16,7 +16,7 @@ import { RabbitMQConsumerService } from './rabbitmq-consumer.service.js';
         const host = config.get<string>('RABBITMQ_HOST', 'localhost');
         const port = config.get<number>('RABBITMQ_PORT', 5672);
         const uri = config.get<string>('RABBITMQ_URL') || `amqp://${user}:${pass}@${host}:${port}`;
-        
+
         return {
           exchanges: [
             {
