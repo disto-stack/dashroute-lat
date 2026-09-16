@@ -4,6 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
   Inject,
+  Logger,
 } from '@nestjs/common';
 import { type Request } from 'express';
 
@@ -19,6 +20,8 @@ export interface AuthenticatedUser {
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  private readonly logger = new Logger(JwtAuthGuard.name);
+  
   constructor(@Inject(ConfigService) private configService: ConfigService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -41,7 +44,9 @@ export class JwtAuthGuard implements CanActivate {
 
       (request as any).user = user;
       return true;
-    } catch {
+    } catch (error) {
+      const err = error as Error;
+      this.logger.error(`Token verification failed: ${err.message}`, err.stack);
       throw new UnauthorizedException('Invalid or expired authentication token');
     }
   }

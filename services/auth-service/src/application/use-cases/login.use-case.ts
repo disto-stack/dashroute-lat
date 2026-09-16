@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InvalidCredentialsException } from '../../domain/exceptions/domain.exceptions.js';
 import {
   USER_REPOSITORY_PORT,
@@ -13,6 +13,8 @@ import { type LoginDto } from '../dto/login.dto.js';
 
 @Injectable()
 export class LoginUseCase {
+  private readonly logger = new Logger(LoginUseCase.name);
+
   constructor(
     @Inject(USER_REPOSITORY_PORT) private readonly userRepo: IUserRepository,
     @Inject(PASSWORD_HASHER_PORT) private readonly hasher: IPasswordHasher,
@@ -20,13 +22,16 @@ export class LoginUseCase {
   ) {}
 
   async execute(dto: LoginDto) {
-    const user = await this.userRepo.findByEmail(dto.email.toLowerCase().trim());
+    const formattedEmail = dto.email.toLowerCase().trim();
+    const user = await this.userRepo.findByEmail(formattedEmail);
     if (!user) {
+      this.logger.warn(`Failed login attempt: Email ${formattedEmail} not found`);
       throw new InvalidCredentialsException();
     }
 
     const isValid = await this.hasher.verify(user.passwordHash, dto.password);
     if (!isValid) {
+      this.logger.warn(`Failed login attempt: Invalid password for user ${user.id}`);
       throw new InvalidCredentialsException();
     }
 
@@ -43,6 +48,8 @@ export class LoginUseCase {
       courierId,
     });
 
+    this.logger.log(`User ${user.id} (${user.role}) logged in successfully`);
+
     return {
       ...tokens,
       user: {
@@ -55,3 +62,4 @@ export class LoginUseCase {
     };
   }
 }
+

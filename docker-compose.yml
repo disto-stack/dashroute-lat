@@ -6,6 +6,9 @@ volumes:
   postgres_data:
   redis_data:
   rabbitmq_data:
+  prometheus_data:
+  loki_data:
+  grafana_data:
 
 services:
   postgres:
@@ -92,3 +95,80 @@ services:
       - ./docs/api:/usr/share/nginx/html/specs:ro
     ports:
       - '${SWAGGER_PORT:-8080}:8080'
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.60
+    container_name: delivery_jaeger
+    restart: always
+    networks:
+      - delivery_network
+    ports:
+      - "16686:16686"
+      - "4317"
+
+  loki:
+    image: grafana/loki:3.1.0
+    container_name: delivery_loki
+    restart: always
+    networks:
+      - delivery_network
+    command: -config.file=/etc/loki/loki-config.yml
+    volumes:
+      - ./infra/observability/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/tmp/loki
+    ports:
+      - "3100:3100"
+
+  prometheus:
+    image: prom/prometheus:v2.54.0
+    container_name: delivery_prometheus
+    restart: always
+    networks:
+      - delivery_network
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    volumes:
+      - ./infra/observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.108.0
+    container_name: delivery_otel_collector
+    restart: always
+    networks:
+      - delivery_network
+    command: ["--config=/etc/otel-collector-config.yml"]
+    volumes:
+      - ./infra/observability/otel-collector/otel-collector-config.yml:/etc/otel-collector-config.yml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8889:8889"
+    depends_on:
+      - jaeger
+      - loki
+      - prometheus
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: delivery_grafana
+    restart: always
+    networks:
+      - delivery_network
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - loki
+      - jaeger
+
