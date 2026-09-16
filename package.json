@@ -13,7 +13,8 @@
     "dev:auth": "pnpm --filter auth-service dev",
     "dev:orders": "pnpm --filter orders-service dev",
     "dev:audit": "pnpm --filter audit-service dev",
-    "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT\" -c \"cyan,yellow,magenta\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\""
+    "dev:dispatch": "cd services/dispatch-engine && go run github.com/air-verse/air@latest",
+    "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT,DISPATCH\" -c \"cyan,yellow,magenta,green\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\" \"pnpm dev:dispatch\""
   },
   "packageManager": "pnpm@9.15.0",
   "pnpm": {

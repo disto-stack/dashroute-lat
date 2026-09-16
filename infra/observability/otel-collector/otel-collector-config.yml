@@ -11,6 +11,14 @@ processors:
     timeout: 1s
     send_batch_size: 256
 
+  transform/logs:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          # If body is a JSON string, parse it and promote fields to attributes
+          - merge_maps(attributes, ParseJSON(body), "upsert") where IsMatch(body, "^\\{")
+
 exporters:
   prometheus:
     endpoint: '0.0.0.0:8889'
@@ -18,6 +26,13 @@ exporters:
 
   loki:
     endpoint: 'http://loki:3100/loki/api/v1/push'
+    default_labels_enabled:
+      exporter: false
+      job: true
+      instance: false
+      level: true
+    resource_to_telemetry_conversion:
+      enabled: true
 
   otlp/jaeger:
     endpoint: 'jaeger:4317'
@@ -39,5 +54,5 @@ service:
       exporters: [prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [batch]
+      processors: [batch, transform/logs]
       exporters: [loki, debug]
