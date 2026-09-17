@@ -13,17 +13,27 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/dashroute/dispatch-engine/internal/broker"
-	"github.com/dashroute/dispatch-engine/internal/redis"
 )
 
+type EventBroker interface {
+	PublishEvent(ctx context.Context, routingKey string, envelope broker.EventEnvelope) error
+	ConsumeOrders(handler func(context.Context, amqp.Delivery)) error
+}
+
+type LocationStore interface {
+	SearchNearbyCouriers(ctx context.Context, lon, lat float64, radiusKm float64, count int) ([]string, error)
+	GetCourierStatus(ctx context.Context, courierID string) (string, error)
+	AcquireLock(ctx context.Context, courierID string) (bool, error)
+}
+
 type Processor struct {
-	brokerClient *broker.Broker
-	redisClient  *redis.Client
+	brokerClient EventBroker
+	redisClient  LocationStore
 	logger       *zap.Logger
 	tracer       trace.Tracer
 }
 
-func NewProcessor(b *broker.Broker, r *redis.Client, logger *zap.Logger) *Processor {
+func NewProcessor(b EventBroker, r LocationStore, logger *zap.Logger) *Processor {
 	return &Processor{
 		brokerClient: b,
 		redisClient:  r,
@@ -34,10 +44,10 @@ func NewProcessor(b *broker.Broker, r *redis.Client, logger *zap.Logger) *Proces
 
 func (p *Processor) Start() error {
 	p.logger.Info("Starting dispatch processor...")
-	return p.brokerClient.ConsumeOrders(p.handleOrderCreated)
+	return p.brokerClient.ConsumeOrders(p.HandleOrderCreated)
 }
 
-func (p *Processor) handleOrderCreated(ctx context.Context, d amqp.Delivery) {
+func (p *Processor) HandleOrderCreated(ctx context.Context, d amqp.Delivery) {
 	ctx, span := p.tracer.Start(ctx, "ConsumeOrderCreated")
 	defer span.End()
 

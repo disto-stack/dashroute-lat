@@ -30,8 +30,12 @@ func NewRedisClient(url string, logger *zap.Logger) *Client {
 	}
 
 	logger.Info("Connected to Redis successfully")
+	return NewClientWithDB(client, logger)
+}
+
+func NewClientWithDB(db *redis.Client, logger *zap.Logger) *Client {
 	return &Client{
-		db:     client,
+		db:     db,
 		logger: logger,
 		tracer: otel.Tracer("dispatch-engine/redis"),
 	}
