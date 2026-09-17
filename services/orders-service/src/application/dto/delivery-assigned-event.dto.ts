@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const deliveryAssignedEventSchema = z.object({
-  orderId: z.string().uuid(),
-  courierId: z.string().uuid(),
+  orderId: z.string().min(1),
+  courierId: z.string().min(1),
   assignedAt: z.string().datetime().optional(),
 });
 

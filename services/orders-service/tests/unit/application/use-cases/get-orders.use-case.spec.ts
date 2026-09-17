@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GetOrdersUseCase } from '../../../src/application/use-cases/get-orders.use-case.js';
-import { type IOrderRepository } from '../../../src/domain/ports/order-repository.port.js';
-import { type AuthenticatedUser } from '../../../src/infrastructure/http/guards/jwt-auth.guard.js';
+import { GetOrdersUseCase } from '../../../../src/application/use-cases/get-orders.use-case.js';
+import { type IOrderRepository } from '../../../../src/domain/ports/order-repository.port.js';
+import { type AuthenticatedUser } from '../../../../src/infrastructure/http/guards/jwt-auth.guard.js';
 
 describe('GetOrdersUseCase', () => {
   let useCase: GetOrdersUseCase;

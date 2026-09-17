@@ -21,3 +21,5 @@ Execute proximity matching and atomic concurrency locking entirely within **Redi
    ```text
    SET courier:lock:<courier_id> "BUSY" NX EX 30
    ```
+
+4. **Handling Unavailability (Fail Fast):** If `GEOSEARCH` returns 0 candidates or all candidates fail the status/lock validation, the Dispatch Engine immediately publishes an `order.dispatch_failed` event to the broker. The Orders Service consumes this event and definitively cancels the order.

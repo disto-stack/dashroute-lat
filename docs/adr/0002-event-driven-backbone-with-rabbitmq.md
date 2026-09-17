@@ -16,11 +16,12 @@ Implement an **Asynchronous Event-Driven Architecture (EDA)** backed by **Rabbit
 
 1. **Primary Exchange (`dashroute.events`):**
 
-   - Configured as a durable `topic` exchange to route business domain events using dot-notation routing keys (`order.created`, `delivery.assigned`, `delivery.completed`).
+   - Configured as a durable `topic` exchange to route business domain events using dot-notation routing keys (`order.created`, `delivery.assigned`, `order.dispatch_failed`, `delivery.completed`).
 
 2. **Consumer Queues:**
    - `dispatch.orders.q`: Dedicated queue bound to `order.created` for the Go-based Dispatch Engine.
    - `orders.assigned.q`: Dedicated queue bound to `delivery.assigned` for the Orders Service state updater.
+   - `orders.dispatch_failed.q`: Dedicated queue bound to `order.dispatch_failed` for the Orders Service to handle fail-fast cancellations.
    - `audit.events.q`: Dedicated queue bound to `#` (all events) for immutable audit logging.
 3. **Dead Letter Exchange (`dashroute.dlx`):**
    - A `fanout` exchange paired with `dead.letter.q` to isolate poisoned or repeatedly failed messages (after 3 consecutive `NACK` attempts) without stalling active queues.

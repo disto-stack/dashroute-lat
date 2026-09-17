@@ -30,7 +30,7 @@ import { RabbitMQConsumerService } from './rabbitmq-consumer.service.js';
       },
     }),
   ],
-  providers: [RabbitMQPublisherService, RabbitMQConsumerService],
+  providers: [RabbitMQPublisherService],
   exports: [GoLevelUpRabbitMQModule, RabbitMQPublisherService],
 })
 export class RabbitMQModule {}

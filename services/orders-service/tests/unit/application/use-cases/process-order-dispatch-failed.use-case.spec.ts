@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ProcessOrderAssignedUseCase } from '../../../src/application/use-cases/process-order-assigned.use-case.js';
-import { type IOrderRepository } from '../../../src/domain/ports/order-repository.port.js';
+import { ProcessOrderDispatchFailedUseCase } from '../../../../src/application/use-cases/process-order-dispatch-failed.use-case.js';
+import { type IOrderRepository } from '../../../../src/domain/ports/order-repository.port.js';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { Order } from '../../../src/domain/entities/order.entity.js';
+import { Order } from '../../../../src/domain/entities/order.entity.js';
 
-describe('ProcessOrderAssignedUseCase', () => {
-  let useCase: ProcessOrderAssignedUseCase;
+describe('ProcessOrderDispatchFailedUseCase', () => {
+  let useCase: ProcessOrderDispatchFailedUseCase;
   let mockRepo: any;
 
   beforeEach(() => {
@@ -14,10 +14,10 @@ describe('ProcessOrderAssignedUseCase', () => {
       updateStatus: vi.fn(),
     };
 
-    useCase = new ProcessOrderAssignedUseCase(mockRepo as unknown as IOrderRepository);
+    useCase = new ProcessOrderDispatchFailedUseCase(mockRepo as unknown as IOrderRepository);
   });
 
-  it('should process assignment successfully for a PENDING order', async () => {
+  it('should process dispatch failure successfully for a PENDING order', async () => {
     const pendingOrder = new Order(
       'order-1',
       'customer-1',
@@ -31,30 +31,29 @@ describe('ProcessOrderAssignedUseCase', () => {
     mockRepo.findById.mockResolvedValue(pendingOrder);
     mockRepo.updateStatus.mockResolvedValue({
       ...pendingOrder,
-      status: 'ASSIGNED',
-      courierId: 'courier-999',
+      status: 'CANCELLED',
     });
 
     const event = {
       orderId: 'order-1',
-      courierId: 'courier-999',
+      reason: 'NO_COURIERS_AVAILABLE',
     };
 
     await useCase.execute(event);
 
     expect(mockRepo.findById).toHaveBeenCalledWith('order-1');
-    expect(mockRepo.updateStatus).toHaveBeenCalledWith('order-1', 'ASSIGNED', 'courier-999');
+    expect(mockRepo.updateStatus).toHaveBeenCalledWith('order-1', 'CANCELLED', undefined);
   });
 
   it('should throw NotFoundException when order does not exist', async () => {
     mockRepo.findById.mockResolvedValue(null);
 
     await expect(
-      useCase.execute({ orderId: 'non-existent', courierId: 'courier-1' }),
+      useCase.execute({ orderId: 'non-existent', reason: 'TEST' }),
     ).rejects.toThrow(NotFoundException);
   });
 
-  it('should throw BadRequestException when order is in an invalid state for assignment', async () => {
+  it('should throw BadRequestException when order is in an invalid state for cancellation', async () => {
     const deliveredOrder = new Order(
       'order-1',
       'customer-1',
@@ -67,8 +66,8 @@ describe('ProcessOrderAssignedUseCase', () => {
 
     mockRepo.findById.mockResolvedValue(deliveredOrder);
 
-    await expect(useCase.execute({ orderId: 'order-1', courierId: 'courier-999' })).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      useCase.execute({ orderId: 'order-1', reason: 'LATE_FAILURE' })
+    ).rejects.toThrow(BadRequestException);
   });
 });
