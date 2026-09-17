@@ -9,6 +9,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 
@@ -31,15 +32,22 @@ type Processor struct {
 	redisClient  LocationStore
 	logger       *zap.Logger
 	tracer       trace.Tracer
+	metrics      *dispatchMetrics
 }
 
-func NewProcessor(b EventBroker, r LocationStore, logger *zap.Logger) *Processor {
+func NewProcessor(b EventBroker, r LocationStore, logger *zap.Logger) (*Processor, error) {
+	m, err := newDispatchMetrics()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Processor{
 		brokerClient: b,
 		redisClient:  r,
 		logger:       logger,
 		tracer:       otel.Tracer("dispatch-engine/processor"),
-	}
+		metrics:      m,
+	}, nil
 }
 
 func (p *Processor) Start() error {
@@ -48,6 +56,7 @@ func (p *Processor) Start() error {
 }
 
 func (p *Processor) HandleOrderCreated(ctx context.Context, d amqp.Delivery) {
+	start := time.Now()
 	ctx, span := p.tracer.Start(ctx, "ConsumeOrderCreated")
 	defer span.End()
 
@@ -56,6 +65,8 @@ func (p *Processor) HandleOrderCreated(ctx context.Context, d amqp.Delivery) {
 		p.logger.Error("Failed to unmarshal event envelope", zap.Error(err))
 		span.RecordError(err)
 		d.Nack(false, false)
+		p.metrics.ordersProcessed.Add(ctx, 1, metric.WithAttributes(attribute.String("result", "error")))
+		p.metrics.assignmentDuration.Record(ctx, time.Since(start).Seconds(), metric.WithAttributes(attribute.String("result", "error")))
 		return
 	}
 
@@ -65,6 +76,8 @@ func (p *Processor) HandleOrderCreated(ctx context.Context, d amqp.Delivery) {
 		p.logger.Error("Failed to unmarshal order payload", zap.Error(err))
 		span.RecordError(err)
 		d.Nack(false, false)
+		p.metrics.ordersProcessed.Add(ctx, 1, metric.WithAttributes(attribute.String("result", "error")))
+		p.metrics.assignmentDuration.Record(ctx, time.Since(start).Seconds(), metric.WithAttributes(attribute.String("result", "error")))
 		return
 	}
 
@@ -82,6 +95,8 @@ func (p *Processor) HandleOrderCreated(ctx context.Context, d amqp.Delivery) {
 		p.logger.Error("Error searching for couriers", zap.Error(err))
 		span.RecordError(err)
 		d.Nack(false, false)
+		p.metrics.ordersProcessed.Add(ctx, 1, metric.WithAttributes(attribute.String("result", "error")))
+		p.metrics.assignmentDuration.Record(ctx, time.Since(start).Seconds(), metric.WithAttributes(attribute.String("result", "error")))
 		return
 	}
 	span.SetAttributes(attribute.Int("couriers.found", len(couriers)))
@@ -108,6 +123,8 @@ func (p *Processor) HandleOrderCreated(ctx context.Context, d amqp.Delivery) {
 			p.logger.Info("Successfully locked courier", zap.String("courierId", courierID), zap.String("orderId", orderPayload.OrderID))
 			p.publishSuccess(ctx, orderPayload.OrderID, courierID)
 			d.Ack(false)
+			p.metrics.ordersProcessed.Add(ctx, 1, metric.WithAttributes(attribute.String("result", "assigned")))
+			p.metrics.assignmentDuration.Record(ctx, time.Since(start).Seconds(), metric.WithAttributes(attribute.String("result", "assigned")))
 			return
 		}
 	}
@@ -115,6 +132,8 @@ func (p *Processor) HandleOrderCreated(ctx context.Context, d amqp.Delivery) {
 	p.logger.Info("No available couriers found. Emitting dispatch_failed", zap.String("orderId", orderPayload.OrderID))
 	p.publishFailFast(ctx, orderPayload.OrderID, "NO_COURIERS_AVAILABLE")
 	d.Ack(false)
+	p.metrics.ordersProcessed.Add(ctx, 1, metric.WithAttributes(attribute.String("result", "failed")))
+	p.metrics.assignmentDuration.Record(ctx, time.Since(start).Seconds(), metric.WithAttributes(attribute.String("result", "failed")))
 }
 
 func (p *Processor) publishSuccess(ctx context.Context, orderID, courierID string) {

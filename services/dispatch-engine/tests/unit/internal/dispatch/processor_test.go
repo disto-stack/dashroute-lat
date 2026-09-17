@@ -11,6 +11,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
 
@@ -71,6 +72,16 @@ func (m *MockLocationStore) AcquireLock(ctx context.Context, courierID string) (
 	return args.Bool(0), args.Error(1)
 }
 
+// newTestProcessor is a helper that creates a Processor for tests.
+// OTel uses a no-op MeterProvider by default in tests, so metrics are no-ops
+// and newDispatchMetrics() will never return an error in this context.
+func newTestProcessor(t *testing.T, b *MockBroker, r *MockLocationStore) *dispatch.Processor {
+	t.Helper()
+	processor, err := dispatch.NewProcessor(b, r, zap.NewNop())
+	require.NoError(t, err, "NewProcessor should never fail in test environment")
+	return processor
+}
+
 func createOrderDelivery(mockAck *MockAcknowledger, orderID, customerID string, lon, lat float64) amqp.Delivery {
 	payload := broker.OrderCreatedPayload{
 		OrderID:     orderID,
@@ -101,9 +112,8 @@ func createOrderDelivery(mockAck *MockAcknowledger, orderID, customerID string, 
 func TestProcessor_Start(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockBroker.On("ConsumeOrders", mock.Anything).Return(nil)
 
@@ -116,9 +126,8 @@ func TestProcessor_Start(t *testing.T) {
 func TestProcessor_HandleOrderCreated_HappyPath(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockAck := &MockAcknowledger{}
 	delivery := createOrderDelivery(mockAck, "ord-100", "cust-1", -74.006, 40.7128)
@@ -148,9 +157,8 @@ func TestProcessor_HandleOrderCreated_HappyPath(t *testing.T) {
 func TestProcessor_HandleOrderCreated_SecondCourierAvailable(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockAck := &MockAcknowledger{}
 	delivery := createOrderDelivery(mockAck, "ord-101", "cust-1", -74.006, 40.7128)
@@ -186,9 +194,8 @@ func TestProcessor_HandleOrderCreated_SecondCourierAvailable(t *testing.T) {
 func TestProcessor_HandleOrderCreated_FailFast_NoCouriers(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockAck := &MockAcknowledger{}
 	delivery := createOrderDelivery(mockAck, "ord-102", "cust-1", -74.006, 40.7128)
@@ -215,9 +222,8 @@ func TestProcessor_HandleOrderCreated_FailFast_NoCouriers(t *testing.T) {
 func TestProcessor_HandleOrderCreated_FailFast_AllCouriersBusy(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockAck := &MockAcknowledger{}
 	delivery := createOrderDelivery(mockAck, "ord-103", "cust-1", -74.006, 40.7128)
@@ -249,9 +255,8 @@ func TestProcessor_HandleOrderCreated_FailFast_AllCouriersBusy(t *testing.T) {
 func TestProcessor_HandleOrderCreated_PublishEventError(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockAck := &MockAcknowledger{}
 	delivery := createOrderDelivery(mockAck, "ord-104", "cust-1", -74.006, 40.7128)
@@ -273,9 +278,8 @@ func TestProcessor_HandleOrderCreated_PublishEventError(t *testing.T) {
 func TestProcessor_HandleOrderCreated_SearchError(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockAck := &MockAcknowledger{}
 	delivery := createOrderDelivery(mockAck, "ord-105", "cust-1", -74.006, 40.7128)
@@ -294,9 +298,8 @@ func TestProcessor_HandleOrderCreated_SearchError(t *testing.T) {
 func TestProcessor_HandleOrderCreated_InvalidPayload(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	mockAck := &MockAcknowledger{}
 	delivery := amqp.Delivery{
@@ -315,9 +318,8 @@ func TestProcessor_HandleOrderCreated_InvalidPayload(t *testing.T) {
 func TestProcessor_HandleOrderCreated_InvalidInnerPayload(t *testing.T) {
 	mockBroker := new(MockBroker)
 	mockRedis := new(MockLocationStore)
-	logger := zap.NewNop()
 
-	processor := dispatch.NewProcessor(mockBroker, mockRedis, logger)
+	processor := newTestProcessor(t, mockBroker, mockRedis)
 
 	envelope := broker.EventEnvelope{
 		EventID:   "evt-bad",

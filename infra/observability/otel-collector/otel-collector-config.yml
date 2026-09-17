@@ -31,8 +31,6 @@ exporters:
       job: true
       instance: false
       level: true
-    resource_to_telemetry_conversion:
-      enabled: true
 
   otlp/jaeger:
     endpoint: 'jaeger:4317'
