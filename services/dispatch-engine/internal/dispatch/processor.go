@@ -71,7 +71,7 @@ func (p *Processor) handleOrderCreated(ctx context.Context, d amqp.Delivery) {
 	if err != nil {
 		p.logger.Error("Error searching for couriers", zap.Error(err))
 		span.RecordError(err)
-		d.Nack(false, true)
+		d.Nack(false, false)
 		return
 	}
 	span.SetAttributes(attribute.Int("couriers.found", len(couriers)))

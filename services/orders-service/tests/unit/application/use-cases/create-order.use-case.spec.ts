@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { CreateOrderUseCase } from '../../../src/application/use-cases/create-order.use-case.js';
-import { type RabbitMQPublisherService } from '../../../src/infrastructure/messaging/rabbitmq-publisher.service.js';
-import { type IOrderRepository } from '../../../src/domain/ports/order-repository.port.js';
+import { CreateOrderUseCase } from '../../../../src/application/use-cases/create-order.use-case.js';
+import { type RabbitMQPublisherService } from '../../../../src/infrastructure/messaging/rabbitmq-publisher.service.js';
+import { type IOrderRepository } from '../../../../src/domain/ports/order-repository.port.js';
 import { randomUUID } from 'crypto';
 
 describe('CreateOrderUseCase', () => {
@@ -46,7 +46,14 @@ describe('CreateOrderUseCase', () => {
       pickupLocation: dto.pickupLocation,
       dropoffLocation: dto.dropoffLocation,
     });
-    expect(mockPublisher.publish).toHaveBeenCalledWith('order.created', result);
+    expect(mockPublisher.publish).toHaveBeenCalledWith('order.created', {
+      orderId: result.id,
+      customerId: result.customerId,
+      pickupLon: result.pickupLocation.lng,
+      pickupLat: result.pickupLocation.lat,
+      deliveryLon: result.dropoffLocation.lng,
+      deliveryLat: result.dropoffLocation.lat,
+    });
   });
 
   it('should log error and rethrow when publisher fails', async () => {

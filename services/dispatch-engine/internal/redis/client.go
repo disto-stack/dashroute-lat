@@ -45,15 +45,13 @@ func (c *Client) SearchNearbyCouriers(ctx context.Context, lon, lat float64, rad
 	ctx, span := c.tracer.Start(ctx, "Redis.GEOSEARCH")
 	defer span.End()
 
-	res, err := c.db.GeoSearchLocation(ctx, "couriers:locations", &redis.GeoSearchLocationQuery{
-		GeoSearchQuery: redis.GeoSearchQuery{
-			Longitude:  lon,
-			Latitude:   lat,
-			Radius:     radiusKm,
-			RadiusUnit: "km",
-			Sort:       "ASC",
-			Count:      count,
-		},
+	res, err := c.db.GeoSearch(ctx, "couriers:locations", &redis.GeoSearchQuery{
+		Longitude:  lon,
+		Latitude:   lat,
+		Radius:     radiusKm,
+		RadiusUnit: "km",
+		Sort:       "ASC",
+		Count:      count,
 	}).Result()
 
 	if err != nil {
@@ -61,11 +59,7 @@ func (c *Client) SearchNearbyCouriers(ctx context.Context, lon, lat float64, rad
 		return nil, err
 	}
 
-	courierIDs := make([]string, len(res))
-	for i, loc := range res {
-		courierIDs[i] = loc.Name
-	}
-	return courierIDs, nil
+	return res, nil
 }
 
 func (c *Client) GetCourierStatus(ctx context.Context, courierID string) (string, error) {

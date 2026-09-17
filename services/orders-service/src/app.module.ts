@@ -9,6 +9,8 @@ import { CreateOrderUseCase } from './application/use-cases/create-order.use-cas
 import { GetOrdersUseCase } from './application/use-cases/get-orders.use-case.js';
 import { GetOrderByIdUseCase } from './application/use-cases/get-order-by-id.use-case.js';
 import { ProcessOrderAssignedUseCase } from './application/use-cases/process-order-assigned.use-case.js';
+import { ProcessOrderDispatchFailedUseCase } from './application/use-cases/process-order-dispatch-failed.use-case.js';
+import { RabbitMQConsumerService } from './infrastructure/messaging/rabbitmq-consumer.service.js';
 import { JwtAuthGuard } from './infrastructure/http/guards/jwt-auth.guard.js';
 
 @Module({
@@ -40,6 +42,8 @@ import { JwtAuthGuard } from './infrastructure/http/guards/jwt-auth.guard.js';
     GetOrdersUseCase,
     GetOrderByIdUseCase,
     ProcessOrderAssignedUseCase,
+    ProcessOrderDispatchFailedUseCase,
+    RabbitMQConsumerService,
     JwtAuthGuard,
   ],
 })

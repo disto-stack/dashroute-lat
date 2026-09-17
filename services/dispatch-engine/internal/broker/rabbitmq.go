@@ -22,7 +22,6 @@ type EventEnvelope struct {
 type OrderCreatedPayload struct {
 	OrderID     string  `json:"orderId"`
 	CustomerID  string  `json:"customerId"`
-	Restaurant  string  `json:"restaurantId"`
 	PickupLon   float64 `json:"pickupLon"`
 	PickupLat   float64 `json:"pickupLat"`
 	DeliveryLon float64 `json:"deliveryLon"`

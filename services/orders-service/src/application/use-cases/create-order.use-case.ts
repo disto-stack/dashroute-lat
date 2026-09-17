@@ -26,7 +26,15 @@ export class CreateOrderUseCase {
     this.logger.log(`Order ${newOrder.id} successfully created for customer ${customerId}`);
 
     try {
-      this.publisher.publish('order.created', newOrder);
+      const eventPayload = {
+        orderId: newOrder.id,
+        customerId: newOrder.customerId,
+        pickupLon: newOrder.pickupLocation.lng,
+        pickupLat: newOrder.pickupLocation.lat,
+        deliveryLon: newOrder.dropoffLocation.lng,
+        deliveryLat: newOrder.dropoffLocation.lat,
+      };
+      this.publisher.publish('order.created', eventPayload);
     } catch (error) {
       const err = error as Error;
       this.logger.error(

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GetOrderByIdUseCase } from '../../../src/application/use-cases/get-order-by-id.use-case.js';
-import { type IOrderRepository } from '../../../src/domain/ports/order-repository.port.js';
-import { type CaslAbilityFactory } from '../../../src/infrastructure/casl/casl-ability.factory.js';
-import { type AuthenticatedUser } from '../../../src/infrastructure/http/guards/jwt-auth.guard.js';
+import { GetOrderByIdUseCase } from '../../../../src/application/use-cases/get-order-by-id.use-case.js';
+import { type IOrderRepository } from '../../../../src/domain/ports/order-repository.port.js';
+import { type CaslAbilityFactory } from '../../../../src/infrastructure/casl/casl-ability.factory.js';
+import { type AuthenticatedUser } from '../../../../src/infrastructure/http/guards/jwt-auth.guard.js';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
-import { Order } from '../../../src/domain/entities/order.entity.js';
+import { Order } from '../../../../src/domain/entities/order.entity.js';
 
 describe('GetOrderByIdUseCase', () => {
   let useCase: GetOrderByIdUseCase;
