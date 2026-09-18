@@ -30,7 +30,7 @@ The system leverages an **Event-Driven Microservices Architecture (EDA)** paired
 | **API Gateway / Nginx** | C / Nginx Alpine    | TLS termination, rate limiting, and path/protocol routing (`/api/*`, `/ws/*`).              | N/A           |
 | **Auth Service**        | NestJS / TypeScript | User/courier authentication, JWT signing/verification, and RBAC (Clean Architecture).       | PostgreSQL 18 |
 | **Orders Service**      | Node.js / Express   | Order ingestion, relational lifecycle state updates, and client push orchestration.         | PostgreSQL 18 |
-| **Geolocation Service** | Node.js / `ws`      | Ingestion of high-frequency GPS pings (every 3s) from mobile drivers via WebSockets.        | Redis 8.10    |
+| **Geolocation Service** | Go 1.23             | Ingestion of high-frequency GPS pings (every 3s) from mobile drivers via WebSockets.        | Redis 8.10    |
 | **Dispatch Engine**     | Go 1.23             | Geospatial proximity search (`GEOSEARCH`), candidate filtering, and atomic lock management. | Redis 8.10    |
 | **Audit Service**       | Node.js / Worker    | Event tap logging all broker events (`#`) into an append-only ledger for analytics.         | PostgreSQL 18 |
 

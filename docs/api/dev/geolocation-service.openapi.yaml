@@ -1,0 +1,40 @@
+openapi: 3.2.0
+info:
+  title: "[DEV ONLY] Geolocation Service"
+  version: 1.0.0
+  description: >
+    Standalone dev OpenAPI spec for the Geolocation service.
+    Note: For the unified gateway view, check the DashRoute API (Unified Gateway) spec.
+servers:
+  - url: http://localhost:4003
+    description: Local development server
+
+paths:
+  /health:
+    get:
+      summary: Service Health Check
+      responses:
+        '200':
+          description: Service is healthy.
+
+  /ws:
+    get:
+      summary: Connect to Courier Tracking WebSocket
+      description: >
+        **NOTE: This is a WebSocket (ws://) endpoint, not a standard REST HTTP endpoint.**
+        
+        Initiates a persistent WebSocket connection. The client must supply a valid `COURIER` JWT via the standard HTTP `Authorization` header (`Authorization: Bearer <token>`).
+      security:
+        - BearerAuth: []
+      responses:
+        '101':
+          description: Switching Protocols. The connection is successfully upgraded to a WebSocket.
+        '401':
+          description: Unauthorized. Missing or invalid token.
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

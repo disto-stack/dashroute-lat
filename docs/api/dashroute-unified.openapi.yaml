@@ -12,6 +12,8 @@ servers:
 tags:
   - name: Authentication
     description: User registration, courier onboarding, credential verification, and token lifecycle (Auth Service).
+  - name: Geolocation
+    description: Real-time WebSocket connection for courier GPS and status updates (Geolocation Service).
   - name: Health
     description: System and service health checks.
 
@@ -361,6 +363,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /geolocation/ws:
+    get:
+      tags:
+        - Geolocation
+      summary: Connect to Courier Tracking WebSocket
+      description: >
+        **NOTE: This is a WebSocket (ws://) endpoint, not a standard REST HTTP endpoint.**
+        
+        Initiates a persistent WebSocket connection. The client must supply a valid `COURIER` JWT via the standard HTTP `Authorization` header (`Authorization: Bearer <token>`).
+        
+        Once connected, the client should send JSON payloads (see `PingPayload` schema) every few seconds to update their location and maintain the heartbeat.
+      security:
+        - BearerAuth: []
+      responses:
+        '101':
+          description: Switching Protocols. The connection is successfully upgraded to a WebSocket.
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
   /health:
     get:
       tags:
@@ -616,6 +637,23 @@ components:
           type: string
           format: date-time
           example: 2026-08-16T20:00:00.000Z
+
+    PingPayload:
+      type: object
+      description: The JSON payload expected to be sent by the client over the active WebSocket connection.
+      properties:
+        longitude:
+          type: number
+          format: float
+          example: -74.006
+        latitude:
+          type: number
+          format: float
+          example: 40.7128
+        status:
+          type: string
+          enum: [ONLINE, OFFLINE, BUSY]
+          example: ONLINE
 
     ErrorResponse:
       type: object

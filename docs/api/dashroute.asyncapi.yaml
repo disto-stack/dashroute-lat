@@ -1,0 +1,64 @@
+asyncapi: 2.6.0
+info:
+  title: DashRoute - Geolocation Real-Time API
+  version: 1.0.0
+  description: >
+    AsyncAPI documentation for the DashRoute Geolocation Service. 
+    This service uses WebSockets to receive high-frequency location updates and status changes from courier devices.
+
+servers:
+  geolocation-service:
+    url: localhost:4003
+    protocol: ws
+    description: Local development Geolocation WebSocket server
+    security:
+      - bearerAuth: []
+
+channels:
+  /ws:
+    description: The main WebSocket channel for courier telemetry.
+    publish:
+      summary: Courier sends telemetry pings
+      operationId: sendPingPayload
+      message:
+        $ref: '#/components/messages/PingMessage'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: A valid DashRoute JWT containing the COURIER role. Must be passed via the `Authorization` HTTP header during the WebSocket handshake.
+
+  messages:
+    PingMessage:
+      name: PingPayload
+      title: Courier Ping Payload
+      summary: A JSON object containing the latest coordinates and status of the courier.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/PingPayload'
+
+  schemas:
+    PingPayload:
+      type: object
+      properties:
+        longitude:
+          type: number
+          format: float
+          description: The current longitude of the courier.
+          example: -74.006
+        latitude:
+          type: number
+          format: float
+          description: The current latitude of the courier.
+          example: 40.7128
+        status:
+          type: string
+          enum:
+            - ONLINE
+            - OFFLINE
+            - BUSY
+          description: The current operational status of the courier.
+          example: ONLINE
