@@ -4,17 +4,18 @@
   "private": true,
   "description": "DashRoute - Distributed logistics and auto-dispatch engine",
   "scripts": {
-    "build": "pnpm -r --filter=!./services/dispatch-engine build",
-    "test": "pnpm -r --filter=!./services/dispatch-engine test",
-    "lint": "pnpm -r --filter=!./services/dispatch-engine lint",
-    "lint:fix": "pnpm -r --filter=!./services/dispatch-engine lint:fix",
+    "build": "pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service build",
+    "test": "pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service test",
+    "lint": "pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service lint",
+    "lint:fix": "pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service lint:fix",
     "format": "prettier --write \"**/*.{ts,js,json,yaml,yml,md}\"",
     "format:check": "prettier --check \"**/*.{ts,js,json,yaml,yml,md}\"",
     "dev:auth": "pnpm --filter auth-service dev",
     "dev:orders": "pnpm --filter orders-service dev",
     "dev:audit": "pnpm --filter audit-service dev",
     "dev:dispatch": "cd services/dispatch-engine && go run github.com/air-verse/air@latest",
-    "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT,DISPATCH\" -c \"cyan,yellow,magenta,green\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\" \"pnpm dev:dispatch\""
+    "dev:geolocation": "cd services/geolocation-service && go run github.com/air-verse/air@latest",
+    "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT,DISPATCH,GEO\" -c \"cyan,yellow,magenta,green,blue\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\" \"pnpm dev:dispatch\" \"pnpm dev:geolocation\""
   },
   "packageManager": "pnpm@9.15.0",
   "pnpm": {

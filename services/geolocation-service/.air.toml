@@ -1,0 +1,31 @@
+# Air configuration file for Geolocation Service
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/main ./cmd/geolocation/main.go"
+bin = "./tmp/main"
+full_bin = "./tmp/main"
+include_ext = ["go", "yaml", "yml", "json"]
+exclude_dir = ["assets", "tmp", "vendor", "tests"]
+include_dir = []
+exclude_file = []
+exclude_regex = ["_test.go"]
+exclude_unchanged = false
+follow_symlink = false
+log = "build-errors.log"
+poll = false
+poll_interval = 0
+delay = 1000 # ms
+stop_on_error = true
+send_interrupt = false
+kill_delay = 500 # ms
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true
