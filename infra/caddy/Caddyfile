@@ -1,0 +1,71 @@
+{
+	# Global options
+	# For local development, uncomment auto_https off if you face issues,
+	# but by default caddy will generate self-signed certs for .localhost
+}
+
+api.dashroute.localhost, http://localhost:80 {
+	# 1. Rate Limiting (using mholt/caddy-ratelimit plugin)
+	# Limits to 100 requests per minute per IP.
+	rate_limit {
+		zone default {
+			key {remote_ip}
+			events 100
+			window 1m
+		}
+	}
+
+	# 2. CORS Handling
+	@cors_preflight method OPTIONS
+	handle @cors_preflight {
+		header Access-Control-Allow-Origin "*"
+		header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+		header Access-Control-Allow-Headers "Accept, Content-Type, Authorization, X-Requested-With"
+		header Access-Control-Max-Age "3600"
+		respond 204
+	}
+
+	# Add CORS headers to all other requests
+	header Access-Control-Allow-Origin "*"
+	header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+	header Access-Control-Allow-Headers "Accept, Content-Type, Authorization, X-Requested-With"
+
+	# 3. Routing (Strip only /api/v1 prefix)
+	handle_path /api/v1/* {
+		# Auth Service (expects /auth/...)
+		@auth path /auth /auth/*
+		handle @auth {
+			reverse_proxy host.docker.internal:4001 {
+				header_down -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Methods
+				header_down -Access-Control-Allow-Headers
+			}
+		}
+
+		# Orders Service (expects /orders/...)
+		@orders path /orders /orders/*
+		handle @orders {
+			reverse_proxy host.docker.internal:4002 {
+				header_down -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Methods
+				header_down -Access-Control-Allow-Headers
+			}
+		}
+
+		# Geolocation Service (expects /ws on the Go server, but Gateway receives /geolocation/ws)
+		@geo path /geo /geo/* /geolocation /geolocation/*
+		handle @geo {
+			uri strip_prefix /geolocation
+			uri strip_prefix /geo
+			reverse_proxy host.docker.internal:4003 {
+				header_down -Access-Control-Allow-Origin
+				header_down -Access-Control-Allow-Methods
+				header_down -Access-Control-Allow-Headers
+			}
+		}
+	}
+
+	handle {
+		respond "DashRoute API Gateway is running!" 200
+	}
+}
