@@ -9,8 +9,28 @@ volumes:
   prometheus_data:
   loki_data:
   grafana_data:
+  caddy_data:
+  caddy_config:
 
 services:
+  api_gateway:
+    build:
+      context: ./infra/caddy
+      dockerfile: Dockerfile
+    container_name: delivery_api_gateway
+    restart: always
+    networks:
+      - delivery_network
+    ports:
+      - '80:80'
+      - '443:443'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
   postgres:
     image: postgres:18-alpine
     container_name: delivery_postgres

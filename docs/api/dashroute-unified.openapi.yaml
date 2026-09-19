@@ -6,8 +6,10 @@ info:
     Unified API Gateway documentation for DashRoute. Aggregates all public endpoints across microservices
     (Auth, Orders, Dispatch, Tracking) under a single entry point.
 servers:
-  - url: /api
-    description: DashRoute Unified API Gateway
+  - url: http://localhost:80/api/v1
+    description: Local API Gateway (HTTP)
+  - url: https://api.dashroute.localhost/api/v1
+    description: Local API Gateway (HTTPS)
 
 tags:
   - name: Authentication
@@ -251,7 +253,7 @@ paths:
       tags:
         - Orders
       security:
-        - bearerAuth: []
+        - BearerAuth: []
       requestBody:
         required: true
         content:
