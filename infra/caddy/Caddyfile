@@ -4,7 +4,7 @@
 	# but by default caddy will generate self-signed certs for .localhost
 }
 
-api.dashroute.localhost, http://localhost:80 {
+http://api.dashroute.localhost, http://:80 {
 	# 1. Rate Limiting (using mholt/caddy-ratelimit plugin)
 	# Limits to 100 requests per minute per IP.
 	rate_limit {
