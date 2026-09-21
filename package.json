@@ -15,12 +15,24 @@
     "dev:audit": "pnpm --filter audit-service dev",
     "dev:dispatch": "cd services/dispatch-engine && go run github.com/air-verse/air@latest",
     "dev:geolocation": "cd services/geolocation-service && go run github.com/air-verse/air@latest",
-    "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT,DISPATCH,GEO\" -c \"cyan,yellow,magenta,green,blue\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\" \"pnpm dev:dispatch\" \"pnpm dev:geolocation\""
+    "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT,DISPATCH,GEO\" -c \"cyan,yellow,magenta,green,blue\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\" \"pnpm dev:dispatch\" \"pnpm dev:geolocation\"",
+    "apps:mobile": "pnpm --filter mobile start"
   },
   "packageManager": "pnpm@9.15.0",
   "pnpm": {
     "overrides": {
-      "typescript": "^5.8.3"
+      "typescript": "^5.8.3",
+      "esbuild@<=0.24.2": ">=0.25.0",
+      "drizzle-orm@<0.45.2": ">=0.45.2",
+      "uuid@<11.1.1": ">=11.1.1",
+      "esbuild@>=0.27.3 <0.28.1": ">=0.28.1",
+      "decode-uri-component@<=0.4.2": ">=0.5.0",
+      "qs@>=6.14.2 <=6.15.3": ">=6.16.0",
+      "qs@>=2.2.5 <6.16.0": ">=6.16.0",
+      "vitest@>=2.1.0 <4.1.11": ">=4.1.11",
+      "@vitest/mocker@>=2.1.0 <4.1.11": ">=4.1.11",
+      "multer@<2.3.0": ">=2.3.0",
+      "multer@=2.2.0": ">=2.3.0"
     }
   },
   "devDependencies": {

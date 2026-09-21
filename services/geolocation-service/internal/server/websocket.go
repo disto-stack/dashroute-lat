@@ -53,6 +53,10 @@ func (s *Server) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if token == "" {
+		token = r.URL.Query().Get("token")
+	}
+
+	if token == "" {
 		s.logger.Warn("Missing token in WebSocket connection request")
 		s.metrics.AuthFailures.Add(ctx, 1)
 		http.Error(w, "Unauthorized: missing token", http.StatusUnauthorized)
