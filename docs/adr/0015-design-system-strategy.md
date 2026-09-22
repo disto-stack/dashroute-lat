@@ -55,7 +55,7 @@ A single package containing components for all platforms, using platform-specifi
 ```
 packages/ui/src/
 ├── Button/
-├── Button.tsx          ← Uses CSS Modules (`Button.module.css`) + rn-primitives (Web default)
+│   ├── Button.tsx          ← Uses CSS Modules (`Button.module.css`) + rn-primitives (Web default)
 │   ├── Button.native.tsx   ← Uses StyleSheet + rn-primitives (Native override)
 │   ├── Button.types.ts     ← Shared TypeScript props interface
 │   └── index.ts            ← export { Button }
@@ -79,5 +79,5 @@ import { Button } from '@dashroute/ui';
 
 ### Negative
 
-- **Dual Implementation**: Every component in `packages/ui` requires two implementation files (`.web.tsx` and `.native.tsx`) and potentially a `.module.css` file for the web.
+- **Dual Implementation**: Every component in `packages/ui` requires two implementation files (`.tsx` and `.native.tsx`) and potentially a `.module.css` file for the web.
 - **Migration Cost**: The existing `apps/mobile` (now `apps/mobile-driver`) codebase heavily uses NativeWind classes (`className=`). These will need to be gradually rewritten to use `StyleSheet.create()` and the new tokens.
