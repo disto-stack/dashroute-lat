@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { Platform } from 'react-native';
 import { api } from '@/lib/api';
-import { useRouter, useSegments } from 'expo-router';
 
 type User = {
   id: string;
@@ -33,8 +31,6 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const segments = useSegments();
-  const router = useRouter();
 
   useEffect(() => {
     // Check if user is logged in
@@ -54,21 +50,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     checkUser();
   }, []);
-
-  // Route protection
-  useEffect(() => {
-    if (isLoading) return;
-
-    const inAuthGroup = segments[0] === '(auth)';
-
-    if (!user && !inAuthGroup) {
-      // Redirect to login if not authenticated
-      router.replace('/(auth)/login');
-    } else if (user && inAuthGroup) {
-      // Redirect to dashboard if authenticated
-      router.replace('/(app)/dashboard');
-    }
-  }, [user, segments, isLoading]);
 
   const login = async (email: string, password: string) => {
     const { data } = await api.post('/auth/login', { email, password });
