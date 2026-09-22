@@ -16,7 +16,9 @@
     "dev:dispatch": "cd services/dispatch-engine && go run github.com/air-verse/air@latest",
     "dev:geolocation": "cd services/geolocation-service && go run github.com/air-verse/air@latest",
     "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT,DISPATCH,GEO\" -c \"cyan,yellow,magenta,green,blue\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\" \"pnpm dev:dispatch\" \"pnpm dev:geolocation\"",
-    "apps:mobile": "pnpm --filter mobile start"
+    "dev:admin-web": "pnpm --filter admin-web dev",
+    "dev:web": "pnpm dev:admin-web",
+    "dev:mobile-driver": "pnpm --filter dashroute-mobile-driver start"
   },
   "packageManager": "pnpm@9.15.0",
   "pnpm": {
