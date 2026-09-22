@@ -6,6 +6,7 @@ build/
 bin/
 tmp/
 *.tsbuildinfo
+.turbo
 
 .env
 .env.local

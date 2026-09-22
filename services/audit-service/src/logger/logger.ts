@@ -1,5 +1,5 @@
 import pino from 'pino';
-import { AnyValueMap, logs, SeverityNumber, type Logger as OtelLogger } from '@opentelemetry/api-logs';
+import { type AnyValueMap, logs, SeverityNumber, type Logger as OtelLogger } from '@opentelemetry/api-logs';
 
 const PINO_TO_OTEL_SEVERITY: Record<number, SeverityNumber> = {
   10: SeverityNumber.TRACE,

@@ -14,15 +14,15 @@ install:
 	@if [ -f go.work ]; then go work sync; fi
 
 test:
-	pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service test
+	pnpm test
 	@if [ -f go.work ]; then (cd packages/go-contracts && go test ./...) && (cd services/dispatch-engine && go test ./...) && (cd services/geolocation-service && go test ./...); fi
 
 lint:
-	pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service lint
+	pnpm lint
 	@if command -v golangci-lint >/dev/null 2>&1; then golangci-lint run; fi
 
 lint-fix:
-	pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service lint:fix
+	pnpm lint:fix
 
 format:
 	pnpm format
@@ -30,7 +30,7 @@ format:
 format-check:
 
 build:
-	pnpm -r --filter=!./services/dispatch-engine --filter=!./services/geolocation-service build
+	pnpm build
 	@if [ -f services/dispatch-engine/cmd/dispatch/main.go ]; then go build -o bin/dispatch ./services/dispatch-engine/cmd/dispatch; fi
 	@if [ -f services/geolocation-service/cmd/server/main.go ]; then go build -o bin/geolocation ./services/geolocation-service/cmd/server; fi
 
