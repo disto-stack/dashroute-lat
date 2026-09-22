@@ -12,7 +12,10 @@
     "@rn-primitives/portal": "^1.0.0",
     "@rn-primitives/slot": "^1.0.0",
     "@rn-primitives/types": "^1.0.0",
-    "expo-haptics": "^57.0.3"
+    "expo-haptics": "^57.0.3",
+    "lucide-react": "^1.47.0",
+    "lucide-react-native": "^1.47.0",
+    "react-native-svg": "^15.11.1"
   },
   "peerDependencies": {
     "react": "*",

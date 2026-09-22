@@ -1,0 +1,33 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  font: 700 13px/1 var(--font-body);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: currentColor;
+}
+
+.success {
+  background: var(--success-tint);
+  color: var(--success);
+}
+
+.neutral {
+  background: var(--wash);
+  color: var(--muted);
+}
+
+.on-blue {
+  background: var(--on-blue-wash);
+  color: var(--on-blue);
+  padding: 0 14px;
+  height: 34px;
+}

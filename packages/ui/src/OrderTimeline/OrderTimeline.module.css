@@ -1,0 +1,119 @@
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  column-gap: 14px;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  border: 2px solid var(--border-strong);
+  background: var(--card);
+  color: var(--on-blue);
+}
+
+.done .mark {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+.current .mark {
+  border: 3px solid var(--blue);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--blue);
+}
+
+.line {
+  flex: 1;
+  width: 2px;
+  min-height: 20px;
+  margin: 4px 0;
+  background: var(--line);
+}
+
+.done .line {
+  background: var(--blue);
+}
+
+.text {
+  padding-bottom: 18px;
+}
+
+.item:last-child .text {
+  padding-bottom: 0;
+}
+
+.label {
+  font: 700 16px/1.3 var(--font-body);
+  color: var(--ink);
+}
+
+.todo .label {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.sub {
+  margin-top: 2px;
+  font: 400 14px/1.4 var(--font-body);
+  color: var(--muted);
+}
+
+.current .sub {
+  color: var(--ink);
+}
+
+.cancel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+
+.cancelIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  background: var(--danger);
+  color: var(--on-blue);
+  flex-shrink: 0;
+}
+
+.cancel .label {
+  color: var(--danger);
+}
+
+.cancel .sub {
+  color: var(--ink);
+}

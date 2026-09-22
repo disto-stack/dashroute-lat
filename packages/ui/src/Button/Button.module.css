@@ -1,13 +1,16 @@
 .button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  font-weight: 600;
+  gap: 10px;
+  width: 100%;
+  height: var(--control-lg);
+  padding: 0 24px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  font: 700 18px/1.2 var(--font-body);
+  text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  border: none;
 }
 
 .button:disabled {
@@ -16,29 +19,45 @@
 }
 
 .primary {
-  background-color: var(--brand-primary);
-  color: white;
+  background: var(--blue);
+  color: var(--on-blue);
 }
 
-.primary:hover:not(:disabled) {
-  opacity: 0.9;
+.on-blue {
+  background: var(--on-blue);
+  color: var(--blue);
 }
 
 .secondary {
-  background-color: var(--brand-secondary);
-  color: white;
+  height: var(--control);
+  background: var(--wash);
+  color: var(--ink);
+  font-size: 17px;
 }
 
-.secondary:hover:not(:disabled) {
-  opacity: 0.9;
+.on-blue-ghost {
+  height: var(--control);
+  background: var(--on-blue-wash);
+  color: var(--on-blue);
+  font-size: 17px;
+  border-radius: 18px;
 }
 
-.outline {
-  background-color: transparent;
-  color: var(--brand-primary);
-  border: 1px solid var(--brand-primary);
+.auto {
+  width: auto;
 }
 
-.outline:hover:not(:disabled) {
-  background-color: rgba(32, 138, 239, 0.1);
+.compact {
+  height: var(--control-compact);
+  padding: 0 16px;
+  border-radius: var(--radius-xs);
+  font-size: 14px;
+  gap: 8px;
+}
+
+.compact.secondary {
+  height: var(--control-compact);
+  font-size: 14px;
+  background: var(--card);
+  border: 1.5px solid var(--border-strong);
 }
