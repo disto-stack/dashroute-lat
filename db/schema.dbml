@@ -15,7 +15,8 @@ Enum vehicle_type {
 Enum order_status {
   PENDING
   ASSIGNED
-  PICKED_UP
+  ACCEPTED
+  IN_TRANSIT
   DELIVERED
   CANCELLED
 }

@@ -1,6 +1,7 @@
 import { CreateOrderUseCase } from '../../../application/use-cases/create-order.use-case.js';
 import { GetOrdersUseCase } from '../../../application/use-cases/get-orders.use-case.js';
 import { GetOrderByIdUseCase } from '../../../application/use-cases/get-order-by-id.use-case.js';
+import { AcceptOrderUseCase } from '../../../application/use-cases/accept-order.use-case.js';
 import {
   createOrderSchema,
   type CreateOrderDto,
@@ -22,6 +23,7 @@ import {
   UsePipes,
   Req,
   Get,
+  Patch,
   Param,
   Query,
   Inject,
@@ -37,6 +39,8 @@ export class OrdersController {
     private readonly getOrdersUseCase: GetOrdersUseCase,
     @Inject(GetOrderByIdUseCase)
     private readonly getOrderByIdUseCase: GetOrderByIdUseCase,
+    @Inject(AcceptOrderUseCase)
+    private readonly acceptOrderUseCase: AcceptOrderUseCase,
   ) {}
 
   @Post()
@@ -59,5 +63,11 @@ export class OrdersController {
   @CheckPolicies((ability: AppAbility) => ability.can('read', 'Order'))
   async getOrderById(@Param('id') id: string, @Req() req: { user: AuthenticatedUser }) {
     return this.getOrderByIdUseCase.execute(id, req.user);
+  }
+
+  @Patch(':id/accept')
+  @CheckPolicies((ability: AppAbility) => ability.can('update', 'Order'))
+  async acceptOrder(@Param('id') id: string, @Req() req: { user: AuthenticatedUser }) {
+    return this.acceptOrderUseCase.execute(id, req.user.id);
   }
 }

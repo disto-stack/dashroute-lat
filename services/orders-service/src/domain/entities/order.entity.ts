@@ -1,13 +1,39 @@
 import { InvalidStateTransitionException } from '../exceptions/invalid-state-transition.exception.js';
 
-export type OrderStatus = 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
+export type OrderStatus = 'PENDING' | 'ASSIGNED' | 'ACCEPTED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
 
-const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  PENDING: ['ASSIGNED', 'CANCELLED'],
-  ASSIGNED: ['IN_TRANSIT', 'PENDING', 'CANCELLED'],
-  IN_TRANSIT: ['DELIVERED', 'CANCELLED'],
-  DELIVERED: [],
-  CANCELLED: [],
+export type TransitionActor = 'SYSTEM' | 'COURIER' | 'ANY';
+
+export interface TransitionDefinition {
+  allowedTo: OrderStatus[];
+  actor: TransitionActor;
+}
+
+const TRANSITIONS: Record<OrderStatus, TransitionDefinition> = {
+  PENDING: {
+    allowedTo: ['ASSIGNED', 'CANCELLED'],
+    actor: 'SYSTEM',
+  },
+  ASSIGNED: {
+    allowedTo: ['ACCEPTED', 'PENDING', 'CANCELLED'],
+    actor: 'COURIER',
+  },
+  ACCEPTED: {
+    allowedTo: ['IN_TRANSIT', 'CANCELLED'],
+    actor: 'COURIER',
+  },
+  IN_TRANSIT: {
+    allowedTo: ['DELIVERED', 'CANCELLED'],
+    actor: 'COURIER',
+  },
+  DELIVERED: {
+    allowedTo: [],
+    actor: 'ANY',
+  },
+  CANCELLED: {
+    allowedTo: [],
+    actor: 'ANY',
+  },
 };
 
 export class Order {
@@ -23,7 +49,11 @@ export class Order {
   ) {}
 
   public canTransitionTo(targetStatus: OrderStatus): boolean {
-    return ALLOWED_TRANSITIONS[this.status].includes(targetStatus);
+    return TRANSITIONS[this.status].allowedTo.includes(targetStatus);
+  }
+
+  public getActorForCurrentState(): TransitionActor {
+    return TRANSITIONS[this.status].actor;
   }
 
   public transitionTo(targetStatus: OrderStatus): void {
@@ -39,6 +69,10 @@ export class Order {
     this.courierId = courierId;
   }
 
+  public acceptOrder(): void {
+    this.transitionTo('ACCEPTED');
+  }
+
   public markInTransit(): void {
     this.transitionTo('IN_TRANSIT');
   }
@@ -51,3 +85,4 @@ export class Order {
     this.transitionTo('CANCELLED');
   }
 }
+

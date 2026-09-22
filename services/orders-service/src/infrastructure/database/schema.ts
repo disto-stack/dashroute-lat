@@ -3,6 +3,7 @@ import { pgTable, timestamp, varchar, jsonb } from 'drizzle-orm/pg-core';
 export const orderStatusEnum = [
   'PENDING',
   'ASSIGNED',
+  'ACCEPTED',
   'IN_TRANSIT',
   'DELIVERED',
   'CANCELLED',

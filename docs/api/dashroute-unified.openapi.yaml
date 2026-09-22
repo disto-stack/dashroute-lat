@@ -295,7 +295,7 @@ paths:
           description: Filter by status
           schema:
             type: string
-            enum: [PENDING, ASSIGNED, IN_TRANSIT, DELIVERED]
+            enum: [PENDING, ASSIGNED, ACCEPTED, IN_TRANSIT, DELIVERED, CANCELLED]
         - name: customerId
           in: query
           description: Filter by customer ID (ADMIN only)
@@ -354,6 +354,49 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           description: Forbidden to view this order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /orders/{id}/accept:
+    patch:
+      summary: Accept an assigned order
+      tags:
+        - Orders
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Order ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Order accepted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+        '400':
+          description: Invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Forbidden (Courier not assigned to order)
           content:
             application/json:
               schema:
@@ -717,7 +760,7 @@ components:
           maxLength: 32
         status:
           type: string
-          enum: [PENDING, ASSIGNED, IN_TRANSIT, DELIVERED, CANCELLED]
+          enum: [PENDING, ASSIGNED, ACCEPTED, IN_TRANSIT, DELIVERED, CANCELLED]
         pickupLocation:
           $ref: '#/components/schemas/LocationDto'
         dropoffLocation:
