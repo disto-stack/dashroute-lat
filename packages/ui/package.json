@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "dependencies": {
     "@dashroute/ui-tokens": "workspace:*",
     "@rn-primitives/hooks": "^1.0.0",

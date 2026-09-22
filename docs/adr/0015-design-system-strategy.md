@@ -55,8 +55,8 @@ A single package containing components for all platforms, using platform-specifi
 ```
 packages/ui/src/
 ├── Button/
-│   ├── Button.web.tsx      ← Uses CSS Modules (`Button.module.css`) + rn-primitives (Radix)
-│   ├── Button.native.tsx   ← Uses StyleSheet + rn-primitives (Native)
+├── Button.tsx          ← Uses CSS Modules (`Button.module.css`) + rn-primitives (Web default)
+│   ├── Button.native.tsx   ← Uses StyleSheet + rn-primitives (Native override)
 │   ├── Button.types.ts     ← Shared TypeScript props interface
 │   └── index.ts            ← export { Button }
 ```
