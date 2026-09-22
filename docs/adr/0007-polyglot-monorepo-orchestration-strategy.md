@@ -17,9 +17,10 @@ Managing dispersed repositories introduces synchronization overhead and fragment
 
 Adopt a **Polyglot Monorepo Structure** governed by tool-specific package managers, explicit package prefixing, and a unified task orchestrator:
 
-1. **JavaScript/TypeScript Orchestration (pnpm Workspaces):**
-   - Use `pnpm` with `pnpm-workspace.yaml` targeting `packages/ts-*` and `services/*`.
-   - Explicitly exclude all Go modules (`!packages/go-*`, `!services/dispatch-engine`, etc.).
+1. **JavaScript/TypeScript Orchestration (Turborepo + pnpm Workspaces):**
+   - Use `pnpm` with `pnpm-workspace.yaml` to manage package resolution and symlinks for `packages/ts-*` and `services/*`.
+   - Use **Turborepo** (`turbo run <task>`) to execute tasks topologically across the JS/TS ecosystem with remote caching and parallel execution.
+   - Explicitly exclude all Go modules (`!packages/go-*`, `!services/dispatch-engine`, etc.) from JS tooling.
    - Share common TypeScript configs (`@dashroute/ts-config`) and event contracts (`@dashroute/ts-event-contracts`).
 
 2. **Go Workspace Orchestration (Native `go.work`):**
@@ -62,6 +63,7 @@ dashroute/
 - **Crystal Clear Ownership:** The `ts-*` and `go-*` prefixes make it immediately obvious which runtime each package targets.
 - **Instant Local Resolution:** Both `pnpm` (via symlinks) and Go (via `go.work`) resolve internal packages locally without publishing steps.
 - **Unified Developer Experience:** Developers run standardized `make` targets regardless of the underlying runtime.
+- **High-Performance CI/CD:** Turborepo ensures Node.js/TS builds are highly cached and run in parallel, avoiding long wait times for unchanged microservices.
 
 ### Negative
 

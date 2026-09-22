@@ -7,6 +7,7 @@ Accepted
 ## Context
 
 As the DashRoute ecosystem grows, we are developing multiple frontend clients (Driver App, Admin Web, Client App) across different frameworks (Next.js and Expo React Native). Without a standardized internal architecture for these clients, there is a high risk of:
+
 1. Business logic leaking into presentation components.
 2. Unmanageable, monolithic folders (`/components`, `/hooks`, `/services`) that group unrelated files together, making features hard to locate and refactor.
 3. Duplication of domain logic across different pages or screens.
@@ -26,7 +27,7 @@ There is a strict boundary between the UI workspace package and the applications
 
 ### 2. Feature-Sliced Organization
 
-Inside any application (e.g., `apps/admin-web` or `apps/mobile-driver`), source code will be organized by **business domain** (features) rather than by technical role. 
+Inside any application (e.g., `apps/admin-web` or `apps/mobile-driver`), source code will be organized by **business domain** (features) rather than by technical role.
 
 The structure will follow this pattern:
 
@@ -48,6 +49,7 @@ apps/[app-name]/src/
 ### 3. Routing Layer Responsibilities
 
 Files within the routing layer (e.g., Next.js `page.tsx` or Expo `screen.tsx`) should act purely as orchestrators. They should:
+
 - Read URL parameters or route parameters.
 - Import and render the smart components from the `features/` directory.
 - Avoid containing complex local state or heavy JSX structures directly.

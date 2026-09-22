@@ -1,4 +1,5 @@
 import styles from "./page.module.css";
+import { Button } from "@dashroute/ui";
 
 export default function Home() {
   return (
@@ -7,7 +8,7 @@ export default function Home() {
       <p style={{ marginBottom: "var(--spacing-lg)" }}>
         Design system and tokens are working!
       </p>
-      <button className={styles.button}>Test Button</button>
+      <Button title="Universal Button" variant="primary" />
     </main>
   );
 }

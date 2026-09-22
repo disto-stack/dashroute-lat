@@ -1,6 +1,7 @@
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { Button } from '@dashroute/ui';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -51,18 +52,12 @@ export default function LoginScreen() {
             className="w-full bg-zinc-800 text-white rounded-xl px-4 py-3 border border-zinc-700 mb-4"
           />
 
-          <TouchableOpacity
+          <Button
+            title={isSubmitting ? "Entrando..." : "Entrar"}
             onPress={handleLogin}
             disabled={isSubmitting}
-            className={`w-full bg-blue-600 rounded-xl py-3 items-center flex-row justify-center ${isSubmitting ? 'opacity-70' : ''}`}
-          >
-            {isSubmitting ? (
-              <ActivityIndicator color="white" className="mr-2" />
-            ) : null}
-            <Text className="text-white font-semibold text-lg">
-              Entrar
-            </Text>
-          </TouchableOpacity>
+            variant="primary"
+          />
         </View>
       </View>
     </View>
