@@ -18,7 +18,9 @@
     "dev:services": "concurrently -k -n \"AUTH,ORDERS,AUDIT,DISPATCH,GEO\" -c \"cyan,yellow,magenta,green,blue\" \"pnpm dev:auth\" \"pnpm dev:orders\" \"pnpm dev:audit\" \"pnpm dev:dispatch\" \"pnpm dev:geolocation\"",
     "dev:admin-web": "pnpm --filter admin-web dev",
     "dev:web": "pnpm dev:admin-web",
-    "dev:mobile-driver": "pnpm --filter dashroute-mobile-driver start"
+    "dev:mobile-driver": "pnpm --filter dashroute-mobile-driver start",
+    "storybook:web": "pnpm --filter @dashroute/ui storybook:web",
+    "storybook:mobile": "pnpm --filter dashroute-mobile-driver storybook"
   },
   "packageManager": "pnpm@9.15.0",
   "pnpm": {
