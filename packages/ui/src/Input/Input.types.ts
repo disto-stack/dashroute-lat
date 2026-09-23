@@ -1,4 +1,4 @@
-import { ChangeEventHandler } from 'react';
+import { ChangeEventHandler, FocusEventHandler } from 'react';
 
 export interface InputProps {
   label: string;
@@ -10,6 +10,7 @@ export interface InputProps {
   defaultValue?: string;
   autoComplete?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
   /** For a problem with THIS field specifically. Renders a message below the field with a `danger` border. Never use this for login failures (wrong email/password) — that's a security tell; use `Banner` instead. */
   error?: string;
 }

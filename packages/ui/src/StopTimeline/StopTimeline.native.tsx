@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   rail: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 4,
+    paddingVertical: tokens.spacing.space1,
   },
   from: {
     width: 14,
@@ -66,16 +66,16 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   label: {
-    fontWeight: '600',
-    fontSize: 13,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.caption.fontSize,
   },
   name: {
-    fontWeight: '800',
-    fontSize: 28,
-    letterSpacing: -0.56,
+    fontFamily: tokens.type.native.displayExtraBold,
+    fontSize: tokens.type.textStyles.displayStop.fontSize,
+    letterSpacing: tokens.type.textStyles.displayStop.fontSize * -0.02,
   },
   addr: {
-    fontWeight: '400',
-    fontSize: 15,
+    fontFamily: tokens.type.native.bodyRegular,
+    fontSize: tokens.type.textStyles.body.fontSize,
   },
 });

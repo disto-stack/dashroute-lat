@@ -1,25 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import { api } from '@/lib/api';
-
-type User = {
-  id: string;
-  email: string;
-  fullName: string;
-  role: string;
-  courierId?: string;
-};
+import * as authService from '@/features/auth/services/auth.service';
+import { clearTokens, getTokens } from '@/features/auth/services/token-storage';
+import { LoginResponse, User } from '@/features/auth/types';
 
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  setSession: (response: LoginResponse) => void;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Custom hook to use the AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -33,14 +25,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    const checkUser = async () => {
+    const restoreSession = async () => {
       try {
-        const token = await SecureStore.getItemAsync('accessToken');
-
-        if (token) {
-          const { data } = await api.get('/auth/me');
-          setUser(data);
+        const { accessToken } = await getTokens();
+        if (accessToken) {
+          const me = await authService.getMe();
+          setUser(me);
         }
       } catch (e) {
         console.error('Failed to restore session:', e);
@@ -48,33 +38,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLoading(false);
       }
     };
-    checkUser();
+    restoreSession();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const { data } = await api.post('/auth/login', { email, password });
-    
-    await SecureStore.setItemAsync('accessToken', data.accessToken);
-    await SecureStore.setItemAsync('refreshToken', data.refreshToken);
-    
-    setUser(data.user);
+  const setSession = (response: LoginResponse) => {
+    setUser(response.user);
   };
 
   const logout = async () => {
     try {
-      await api.post('/auth/logout');
-    } catch (e) {
-      // Ignore server error on logout
-    }
-    
-    await SecureStore.deleteItemAsync('accessToken');
-    await SecureStore.deleteItemAsync('refreshToken');
-    
+      await authService.logout();
+    } catch (e) { }
+
+    await clearTokens();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, setSession, logout }}>
       {children}
     </AuthContext.Provider>
   );

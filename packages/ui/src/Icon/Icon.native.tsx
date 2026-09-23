@@ -16,6 +16,8 @@ import {
   SlidersHorizontal,
   Menu,
   AlertCircle,
+  Eye,
+  EyeOff,
   type LucideIcon,
 } from 'lucide-react-native';
 import { tokens } from '@dashroute/ui-tokens';
@@ -38,6 +40,8 @@ const ICONS: Record<IconName, LucideIcon> = {
   sliders: SlidersHorizontal,
   menu: Menu,
   alert: AlertCircle,
+  eye: Eye,
+  'eye-off': EyeOff,
 };
 
 export const Icon = ({ name, size = 20, strokeWidth = 2, color = tokens.colors.ink }: IconProps) => {

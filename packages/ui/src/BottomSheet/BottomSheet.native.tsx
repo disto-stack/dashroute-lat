@@ -26,9 +26,9 @@ export const BottomSheet = ({ title, onClose, children }: BottomSheetProps) => {
 
 const styles = StyleSheet.create({
   sheet: {
-    gap: 16,
-    paddingHorizontal: 20,
-    paddingTop: 12,
+    gap: tokens.spacing.space4,
+    paddingHorizontal: tokens.spacing.space5,
+    paddingTop: tokens.spacing.space3,
     paddingBottom: 28,
     borderTopLeftRadius: tokens.radius['2xl'],
     borderTopRightRadius: tokens.radius['2xl'],
@@ -52,9 +52,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontWeight: '800',
-    fontSize: 30,
-    letterSpacing: -0.6,
+    fontFamily: tokens.type.native.displayExtraBold,
+    fontSize: tokens.type.textStyles.displayPlace.fontSize,
+    letterSpacing: tokens.type.textStyles.displayPlace.fontSize * -0.02,
     color: tokens.colors.ink,
   },
   close: {

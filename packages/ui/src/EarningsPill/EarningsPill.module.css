@@ -4,9 +4,9 @@
   align-items: flex-start;
   justify-content: center;
   height: var(--pill-height);
-  padding: 0 16px;
+  padding: 0 var(--space-4);
   border: 0;
-  border-radius: 26px;
+  border-radius: var(--radius-xl);
   background: var(--card);
   box-shadow: var(--shadow-float);
   cursor: pointer;

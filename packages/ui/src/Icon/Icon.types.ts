@@ -14,7 +14,9 @@ export type IconName =
   | 'user'
   | 'sliders'
   | 'menu'
-  | 'alert';
+  | 'alert'
+  | 'eye'
+  | 'eye-off';
 
 export interface IconProps {
   name: IconName;

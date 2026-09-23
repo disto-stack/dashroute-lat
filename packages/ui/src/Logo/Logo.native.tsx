@@ -36,8 +36,15 @@ export const Logo = ({ variant = 'mark', tone = 'default', size = 36 }: LogoProp
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: fs * 0.37 }}>
       {mark}
       <Text style={{ fontSize: fs, color: wordColor }}>
-        <Text style={{ fontWeight: '600' }}>Dash</Text>
-        <Text style={{ fontWeight: '800', color: inverse ? tokens.colors.onBlue : tokens.colors.blue }}>Route</Text>
+        <Text style={{ fontFamily: tokens.type.native.displaySemiBold }}>Dash</Text>
+        <Text
+          style={{
+            fontFamily: tokens.type.native.displayExtraBold,
+            color: inverse ? tokens.colors.onBlue : tokens.colors.blue,
+          }}
+        >
+          Route
+        </Text>
       </Text>
     </View>
   );

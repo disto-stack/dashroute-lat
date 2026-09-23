@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.colors.blue,
   },
   label: {
-    fontWeight: '600',
-    fontSize: 13,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.caption.fontSize,
     color: tokens.colors.muted,
   },
   labelDone: {
@@ -51,6 +51,6 @@ const styles = StyleSheet.create({
   },
   labelCurrent: {
     color: tokens.colors.ink,
-    fontWeight: '700',
+    fontFamily: tokens.type.native.bodyBold,
   },
 });

@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    fontWeight: '600',
-    fontSize: 14,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.label.fontSize,
     lineHeight: 20,
   },
   actionButton: {
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   action: {
-    fontWeight: '700',
+    fontFamily: tokens.type.native.bodyBold,
     fontSize: 14,
     textDecorationLine: 'underline',
   },

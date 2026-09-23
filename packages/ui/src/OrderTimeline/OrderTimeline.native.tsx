@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   mark: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: tokens.radius.panel,
     borderWidth: 2,
     borderColor: tokens.colors.borderStrong,
     backgroundColor: tokens.colors.card,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: 2,
     minHeight: 20,
-    marginVertical: 4,
+    marginVertical: tokens.spacing.space1,
     backgroundColor: tokens.colors.line,
   },
   lineDone: {
@@ -102,16 +102,17 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   label: {
-    fontWeight: '700',
+    fontFamily: tokens.type.native.bodyBold,
     fontSize: 16,
     color: tokens.colors.ink,
   },
   labelTodo: {
-    fontWeight: '600',
+    fontFamily: tokens.type.native.bodySemiBold,
     color: tokens.colors.muted,
   },
   sub: {
     marginTop: 2,
+    fontFamily: tokens.type.native.bodyRegular,
     fontSize: 14,
     color: tokens.colors.muted,
   },
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   cancel: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    gap: tokens.spacing.space3,
     padding: 14,
     borderRadius: tokens.radius.lg,
     backgroundColor: tokens.colors.dangerTint,
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   cancelIcon: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: tokens.radius.sm,
     backgroundColor: tokens.colors.danger,
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
+import { getTokens, setTokens, clearTokens } from '@/features/auth/services/token-storage';
 
 // For Android Emulators, localhost refers to the emulator itself. 10.0.2.2 is the host machine.
 const getBaseUrl = () => {
@@ -19,17 +19,9 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  if (Platform.OS !== 'web') {
-    const token = await SecureStore.getItemAsync('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  } else {
-    // Basic fallback for web testing (since SecureStore doesn't work well on web)
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  const { accessToken } = await getTokens();
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
@@ -41,35 +33,18 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        let refreshToken = null;
-        if (Platform.OS !== 'web') {
-          refreshToken = await SecureStore.getItemAsync('refreshToken');
-        } else {
-          refreshToken = localStorage.getItem('refreshToken');
-        }
+        const { refreshToken } = await getTokens();
 
         if (refreshToken) {
           const { data } = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
-          
-          if (Platform.OS !== 'web') {
-            await SecureStore.setItemAsync('accessToken', data.accessToken);
-            await SecureStore.setItemAsync('refreshToken', data.refreshToken);
-          } else {
-            localStorage.setItem('accessToken', data.accessToken);
-            localStorage.setItem('refreshToken', data.refreshToken);
-          }
-          
+
+          await setTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return axios(originalRequest);
         }
       } catch (refreshError) {
-        if (Platform.OS !== 'web') {
-          await SecureStore.deleteItemAsync('accessToken');
-          await SecureStore.deleteItemAsync('refreshToken');
-        } else {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-        }
+        await clearTokens();
       }
     }
     return Promise.reject(error);

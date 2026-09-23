@@ -79,6 +79,16 @@ export const tokens = {
       display: '"Bricolage Grotesque", "Figtree", system-ui, sans-serif',
       body: '"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif',
     },
+    // Loaded in apps/mobile-driver's root _layout.tsx via useFonts(); every
+    // key here must match a font loaded there exactly, or native silently
+    // falls back to the system font.
+    native: {
+      displaySemiBold: 'BricolageGrotesque_600SemiBold',
+      displayExtraBold: 'BricolageGrotesque_800ExtraBold',
+      bodyRegular: 'Figtree_400Regular',
+      bodySemiBold: 'Figtree_600SemiBold',
+      bodyBold: 'Figtree_700Bold',
+    },
     textStyles: {
       displayHero: { family: 'display', fontSize: 60, lineHeight: 0.98, fontWeight: 800, letterSpacing: '-0.025em' },
       displayAmount: { family: 'display', fontSize: 56, lineHeight: 1, fontWeight: 800, letterSpacing: '-0.025em' },

@@ -44,7 +44,7 @@ export const ProfileMenu = ({
 const styles = StyleSheet.create({
   menu: {
     width: 280,
-    padding: 16,
+    padding: tokens.spacing.space4,
     borderRadius: tokens.radius.menu,
     backgroundColor: tokens.colors.card,
     shadowColor: '#1a1d21',
@@ -54,9 +54,9 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   eyebrow: {
-    fontWeight: '600',
-    fontSize: 12,
-    letterSpacing: 1.4,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.eyebrow.fontSize,
+    letterSpacing: tokens.type.textStyles.eyebrow.fontSize * 0.12,
     textTransform: 'uppercase',
     color: tokens.colors.muted,
     marginBottom: 10,
@@ -67,14 +67,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   label: {
-    fontWeight: '600',
+    fontFamily: tokens.type.native.bodySemiBold,
     fontSize: 16,
     color: tokens.colors.ink,
   },
   divider: {
     height: 1,
     backgroundColor: tokens.colors.line,
-    marginVertical: 16,
+    marginVertical: tokens.spacing.space4,
   },
   items: {
     gap: 2,
@@ -82,17 +82,17 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: tokens.spacing.space3,
     height: tokens.size.target,
-    paddingHorizontal: 4,
+    paddingHorizontal: tokens.spacing.space1,
     borderRadius: tokens.radius.xs,
   },
   itemPressed: {
     backgroundColor: tokens.colors.rowHover,
   },
   itemLabel: {
-    fontWeight: '600',
-    fontSize: 15,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.bodyStrong.fontSize,
     color: tokens.colors.ink,
   },
   danger: {
