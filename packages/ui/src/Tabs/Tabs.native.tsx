@@ -34,9 +34,9 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radius.menu,
   },
   item: {
-    paddingHorizontal: 16,
+    paddingHorizontal: tokens.spacing.space4,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: tokens.radius.lg,
   },
   active: {
     backgroundColor: tokens.colors.card,
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   label: {
-    fontWeight: '600',
-    fontSize: 14,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.label.fontSize,
     color: tokens.colors.muted,
   },
   labelActive: {

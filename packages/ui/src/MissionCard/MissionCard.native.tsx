@@ -38,7 +38,7 @@ export const MissionCard = ({
 const styles = StyleSheet.create({
   card: {
     gap: 14,
-    padding: 20,
+    padding: tokens.spacing.space5,
     paddingBottom: 22,
   },
   paper: {
@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.space2,
   },
   order: {
-    fontWeight: '600',
-    fontSize: 14,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.label.fontSize,
     color: tokens.colors.onBlueSoft,
   },
   orderPaper: {

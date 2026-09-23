@@ -37,7 +37,7 @@ Opens at `http://localhost:6006`, rendering against the real tokens from `@dashr
 pnpm storybook:mobile
 ```
 
-Open the app in the simulator, a device, or Expo Go — it boots **directly into Storybook**, no navigation needed. This works by swapping `apps/mobile-driver`'s entry point (`index.js`) rather than adding a route: Storybook's on-device UI ships its own `NavigationContainer`, and nesting it inside Expo Router's own container triggers a react-navigation bug (`Couldn't find an UnhandledLinkingContext context.`). To go back to the real app, stop the dev server and run `pnpm dev:mobile-driver` (or `start`) instead — the two don't coexist in the same running instance. The existing hand-built showcase at `apps/mobile-driver/src/app/design-system.tsx` (`/design-system` route, the real app's default screen) is unaffected either way.
+Open the app in the simulator, a device, or Expo Go — it boots **directly into Storybook**, no navigation needed. This works by swapping `apps/mobile-driver`'s entry point (`index.js`) rather than adding a route: Storybook's on-device UI ships its own `NavigationContainer`, and nesting it inside Expo Router's own container triggers a react-navigation bug (`Couldn't find an UnhandledLinkingContext context.`). To go back to the real app, stop the dev server and run `pnpm dev:mobile-driver` (or `start`) instead — the two don't coexist in the same running instance.
 
 ## Adding stories to a new component
 

@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: tokens.spacing.space2,
     height: 32,
-    paddingHorizontal: 12,
+    paddingHorizontal: tokens.spacing.space3,
     borderRadius: tokens.radius.pill,
   },
   onBlue: {
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   text: {
-    fontWeight: '700',
+    fontFamily: tokens.type.native.bodyBold,
     fontSize: 13,
   },
 });

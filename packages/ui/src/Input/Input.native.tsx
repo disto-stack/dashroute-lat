@@ -11,6 +11,7 @@ export const Input = ({
   value,
   defaultValue,
   onChange,
+  onBlur,
   error,
 }: InputProps) => {
   const compact = size === 'compact';
@@ -29,6 +30,9 @@ export const Input = ({
         onChangeText={(text: string) => {
           (onChange as unknown as ((text: string) => void) | undefined)?.(text);
         }}
+        onBlur={() => {
+          (onBlur as unknown as (() => void) | undefined)?.();
+        }}
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
@@ -40,37 +44,38 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.space2,
   },
   label: {
-    fontWeight: '600',
-    fontSize: 14,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.label.fontSize,
     color: tokens.colors.ink,
   },
   compactLabel: {
-    fontSize: 13,
+    fontSize: tokens.type.textStyles.caption.fontSize,
   },
   input: {
     width: '100%',
     height: tokens.size.control,
-    paddingHorizontal: 16,
+    paddingHorizontal: tokens.spacing.space4,
     borderWidth: 1.5,
     borderColor: tokens.colors.borderStrong,
     borderRadius: tokens.radius.md,
     backgroundColor: tokens.colors.paper,
     color: tokens.colors.ink,
-    fontSize: 17,
+    fontFamily: tokens.type.native.bodyRegular,
+    fontSize: tokens.type.textStyles.body.fontSize,
   },
   compactInput: {
     height: tokens.size.controlCompact,
     borderRadius: tokens.radius.xs,
-    fontSize: 14,
-    paddingHorizontal: 12,
+    fontSize: tokens.type.textStyles.caption.fontSize,
+    paddingHorizontal: tokens.spacing.space3,
     backgroundColor: tokens.colors.card,
   },
   inputError: {
     borderColor: tokens.colors.danger,
   },
   error: {
-    fontWeight: '600',
-    fontSize: 13,
+    fontFamily: tokens.type.native.bodySemiBold,
+    fontSize: tokens.type.textStyles.caption.fontSize,
     color: tokens.colors.danger,
   },
 });

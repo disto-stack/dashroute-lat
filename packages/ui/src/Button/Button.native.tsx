@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
     width: '100%',
-    paddingHorizontal: 24,
+    paddingHorizontal: tokens.spacing.space6,
     borderRadius: tokens.radius.lg,
   },
   textHidden: {
@@ -112,9 +112,9 @@ const styles = StyleSheet.create({
   },
   compact: {
     height: tokens.size.controlCompact,
-    paddingHorizontal: 16,
+    paddingHorizontal: tokens.spacing.space4,
     borderRadius: tokens.radius.xs,
-    gap: 8,
+    gap: tokens.spacing.space2,
   },
   compactSecondary: {
     height: tokens.size.controlCompact,
@@ -142,14 +142,14 @@ const styles = StyleSheet.create({
   },
   onBlueGhost: {
     backgroundColor: tokens.colors.onBlueWash,
-    borderRadius: 18,
+    borderRadius: tokens.radius.md,
   },
   text: {
-    fontWeight: '700',
-    fontSize: 18,
+    fontFamily: tokens.type.native.bodyBold,
+    fontSize: tokens.type.textStyles.buttonLg.fontSize,
   },
   compactText: {
-    fontSize: 14,
+    fontSize: tokens.type.textStyles.button.fontSize,
   },
   primaryText: {
     color: tokens.colors.onBlue,
@@ -159,10 +159,10 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: tokens.colors.ink,
-    fontSize: 17,
+    fontSize: tokens.type.textStyles.buttonLg.fontSize,
   },
   onBlueGhostText: {
     color: tokens.colors.onBlue,
-    fontSize: 17,
+    fontSize: tokens.type.textStyles.buttonLg.fontSize,
   },
 });

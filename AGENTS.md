@@ -95,4 +95,8 @@ If you make any changes to a database table structure, column type, or entity sc
 - **Use Cases & Domain Logic:** Log key business events (`info`), domain warnings (`warn`), and unrecoverable integration failures (`error`).
 - **Error Formatting:** Always pass the stack trace as the second argument: `this.logger.error(message, (error as Error).stack)`. Never log raw credentials, JWTs, or passwords.
 
+## 11. Git Commit Attribution
+
+- Do **NOT** add a `Co-Authored-By: Claude ...` (or any AI-attribution) trailer to git commit messages or pull request descriptions in this repository, regardless of default tooling behavior that suggests otherwise.
+
 By reading this `AGENTS.md` file, you acknowledge and agree to enforce these boundaries. Happy coding!

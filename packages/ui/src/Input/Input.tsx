@@ -12,6 +12,7 @@ export const Input = ({
   defaultValue,
   autoComplete,
   onChange,
+  onBlur,
   error,
 }: InputProps) => {
   const fieldId = id ?? `dr-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
@@ -32,6 +33,7 @@ export const Input = ({
         value={value}
         defaultValue={defaultValue}
         onChange={onChange}
+        onBlur={onBlur}
         autoComplete={autoComplete}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={errorId}
