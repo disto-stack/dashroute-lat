@@ -15,6 +15,7 @@ import {
   User,
   SlidersHorizontal,
   Menu,
+  AlertCircle,
   type LucideIcon,
 } from 'lucide-react';
 import { IconName, IconProps } from './Icon.types';
@@ -35,6 +36,7 @@ const ICONS: Record<IconName, LucideIcon> = {
   user: User,
   sliders: SlidersHorizontal,
   menu: Menu,
+  alert: AlertCircle,
 };
 
 export const Icon = ({ name, size = 20, strokeWidth = 2, color = 'currentColor' }: IconProps) => {

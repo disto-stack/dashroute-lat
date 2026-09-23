@@ -11,6 +11,7 @@ export const Button = ({
   size = 'default',
   type = 'button',
   disabled = false,
+  loading = false,
   onClick,
   children,
 }: ButtonProps) => {
@@ -20,27 +21,38 @@ export const Button = ({
     styles[variant],
     (auto || compact) && styles.auto,
     compact && styles.compact,
+    loading && styles.loading,
   ]
     .filter(Boolean)
     .join(' ');
 
   const content = (
     <>
-      {children}
-      {icon ? <Icon name={icon} size={compact ? 18 : 20} strokeWidth={2.4} /> : null}
+      <span className={loading ? styles.labelHidden : undefined}>{children}</span>
+      {loading ? (
+        <span className={styles.spinner} aria-hidden="true" />
+      ) : icon ? (
+        <Icon name={icon} size={compact ? 18 : 20} strokeWidth={2.4} />
+      ) : null}
     </>
   );
 
   if (href) {
     return (
-      <a className={className} href={href} onClick={onClick}>
+      <a className={className} href={loading ? undefined : href} onClick={loading ? undefined : onClick} aria-busy={loading || undefined}>
         {content}
       </a>
     );
   }
 
   return (
-    <button type={type} className={className} onClick={onClick} disabled={disabled}>
+    <button
+      type={type}
+      className={className}
+      onClick={loading ? undefined : onClick}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+    >
       {content}
     </button>
   );

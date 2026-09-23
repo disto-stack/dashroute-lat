@@ -1,0 +1,38 @@
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  font: 600 14px/1.4 var(--font-body);
+}
+
+.danger {
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+
+.warning {
+  background: var(--warning-tint);
+  color: var(--warning);
+}
+
+.success {
+  background: var(--success-tint);
+  color: var(--success);
+}
+
+.text {
+  flex: 1;
+}
+
+.retry {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: 700 14px/1.4 var(--font-body);
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

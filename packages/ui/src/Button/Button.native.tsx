@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
+import { Pressable, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { tokens } from '@dashroute/ui-tokens';
 import { Icon } from '../Icon';
@@ -11,13 +11,14 @@ export const Button = ({
   auto = false,
   size = 'default',
   disabled = false,
+  loading = false,
   onClick,
   children,
 }: ButtonProps) => {
   const compact = size === 'compact';
 
   const handlePress = () => {
-    if (disabled) return;
+    if (disabled || loading) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     (onClick as unknown as (() => void) | undefined)?.();
   };
@@ -29,7 +30,8 @@ export const Button = ({
   return (
     <Pressable
       onPress={handlePress}
-      disabled={disabled}
+      disabled={disabled || loading}
+      accessibilityState={{ disabled: disabled || loading, busy: loading }}
       style={({ pressed }) => [
         styles.button,
         compact ? styles.compact : styles[sizeKey(variant)],
@@ -37,11 +39,17 @@ export const Button = ({
         compact && variant === 'secondary' && styles.compactSecondary,
         (auto || compact) && styles.auto,
         disabled && styles.disabled,
-        pressed && !disabled && styles.pressed,
+        pressed && !disabled && !loading && styles.pressed,
       ]}
     >
-      <Text style={[styles.text, compact && styles.compactText, textStyle]}>{children}</Text>
-      {icon ? <Icon name={icon} size={compact ? 18 : 20} strokeWidth={2.4} color={iconColor} /> : null}
+      <Text style={[styles.text, compact && styles.compactText, textStyle, loading && styles.textHidden]}>
+        {children}
+      </Text>
+      {loading ? (
+        <ActivityIndicator color={iconColor} style={styles.spinner} />
+      ) : icon ? (
+        <Icon name={icon} size={compact ? 18 : 20} strokeWidth={2.4} color={iconColor} />
+      ) : null}
     </Pressable>
   );
 };
@@ -81,6 +89,7 @@ const TEXT_COLOR: Record<NonNullable<ButtonProps['variant']>, string> = {
 
 const styles = StyleSheet.create({
   button: {
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -88,6 +97,12 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 24,
     borderRadius: tokens.radius.lg,
+  },
+  textHidden: {
+    opacity: 0,
+  },
+  spinner: {
+    position: 'absolute',
   },
   primarySize: {
     height: tokens.size.controlLg,

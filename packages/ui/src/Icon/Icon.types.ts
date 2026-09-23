@@ -13,7 +13,8 @@ export type IconName =
   | 'list'
   | 'user'
   | 'sliders'
-  | 'menu';
+  | 'menu'
+  | 'alert';
 
 export interface IconProps {
   name: IconName;

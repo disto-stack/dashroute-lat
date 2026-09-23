@@ -15,6 +15,8 @@ export interface ButtonProps {
   size?: 'default' | 'compact';
   type?: 'button' | 'submit';
   disabled?: boolean;
+  /** Replaces the icon with a spinner, hides the text without changing width, and blocks clicks. The only functional (non-decorative) animation in the system. */
+  loading?: boolean;
   onClick?: MouseEventHandler;
   children: ReactNode;
 }

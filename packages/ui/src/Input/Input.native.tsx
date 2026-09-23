@@ -11,13 +11,14 @@ export const Input = ({
   value,
   defaultValue,
   onChange,
+  error,
 }: InputProps) => {
   const compact = size === 'compact';
   return (
     <View style={styles.field}>
       <Text style={[styles.label, compact && styles.compactLabel]}>{label}</Text>
       <TextInput
-        style={[styles.input, compact && styles.compactInput]}
+        style={[styles.input, compact && styles.compactInput, error && styles.inputError]}
         placeholder={placeholder}
         placeholderTextColor={tokens.colors.muted}
         value={value}
@@ -29,6 +30,7 @@ export const Input = ({
           (onChange as unknown as ((text: string) => void) | undefined)?.(text);
         }}
       />
+      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   );
 };
@@ -62,5 +64,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingHorizontal: 12,
     backgroundColor: tokens.colors.card,
+  },
+  inputError: {
+    borderColor: tokens.colors.danger,
+  },
+  error: {
+    fontWeight: '600',
+    fontSize: 13,
+    color: tokens.colors.danger,
   },
 });

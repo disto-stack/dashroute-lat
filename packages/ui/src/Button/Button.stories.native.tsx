@@ -33,3 +33,7 @@ export const Compact: Story = {
 export const Disabled: Story = {
   args: { disabled: true },
 };
+
+export const Loading: Story = {
+  args: { loading: true },
+};

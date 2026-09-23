@@ -14,4 +14,6 @@ export interface SelectProps {
   value?: string;
   defaultValue?: string;
   onChange?: ChangeEventHandler<HTMLSelectElement>;
+  /** Same behavior as `Input.error`: a `danger` border plus a message below the field. */
+  error?: string;
 }

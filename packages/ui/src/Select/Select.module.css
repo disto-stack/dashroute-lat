@@ -52,3 +52,12 @@
 .compact .chev {
   right: 10px;
 }
+
+.fieldError .input {
+  border-color: var(--danger);
+}
+
+.error {
+  font: 600 13px/1.3 var(--font-body);
+  color: var(--danger);
+}

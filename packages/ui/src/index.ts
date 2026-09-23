@@ -5,6 +5,7 @@ export * from './Button';
 export * from './Input';
 export * from './Switch';
 export * from './Tabs';
+export * from './Banner';
 export * from './StatusPill';
 export * from './Stepper';
 export * from './ProfileChip';

@@ -12,11 +12,15 @@ export const Input = ({
   defaultValue,
   autoComplete,
   onChange,
+  error,
 }: InputProps) => {
   const fieldId = id ?? `dr-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  const errorId = error ? `${fieldId}-error` : undefined;
   const compact = size === 'compact';
   return (
-    <div className={[styles.field, compact && styles.compact].filter(Boolean).join(' ')}>
+    <div
+      className={[styles.field, compact && styles.compact, error && styles.fieldError].filter(Boolean).join(' ')}
+    >
       <label htmlFor={fieldId} className={styles.label}>
         {label}
       </label>
@@ -29,7 +33,14 @@ export const Input = ({
         defaultValue={defaultValue}
         onChange={onChange}
         autoComplete={autoComplete}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={errorId}
       />
+      {error ? (
+        <div id={errorId} className={styles.error}>
+          {error}
+        </div>
+      ) : null}
     </div>
   );
 };

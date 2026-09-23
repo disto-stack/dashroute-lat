@@ -42,3 +42,7 @@ export const Compact: Story = {
 export const WithValue: Story = {
   args: { defaultValue: 'providencia' },
 };
+
+export const WithError: Story = {
+  args: { error: 'Seleccioná una zona válida.' },
+};

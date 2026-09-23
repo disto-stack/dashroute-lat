@@ -15,6 +15,7 @@ import {
   User,
   SlidersHorizontal,
   Menu,
+  AlertCircle,
   type LucideIcon,
 } from 'lucide-react-native';
 import { tokens } from '@dashroute/ui-tokens';
@@ -36,6 +37,7 @@ const ICONS: Record<IconName, LucideIcon> = {
   user: User,
   sliders: SlidersHorizontal,
   menu: Menu,
+  alert: AlertCircle,
 };
 
 export const Icon = ({ name, size = 20, strokeWidth = 2, color = tokens.colors.ink }: IconProps) => {

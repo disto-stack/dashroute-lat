@@ -43,3 +43,7 @@ export const Password: Story = {
 export const WithValue: Story = {
   args: { defaultValue: 'camila.rios@dashroute.com' },
 };
+
+export const WithError: Story = {
+  args: { value: 'no-es-un-correo', error: 'Este correo no es válido.' },
+};

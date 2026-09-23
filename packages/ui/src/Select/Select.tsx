@@ -12,11 +12,15 @@ export const Select = ({
   value,
   defaultValue,
   onChange,
+  error,
 }: SelectProps) => {
   const fieldId = id ?? `dr-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  const errorId = error ? `${fieldId}-error` : undefined;
   const compact = size === 'compact';
   return (
-    <div className={[styles.field, compact && styles.compact].filter(Boolean).join(' ')}>
+    <div
+      className={[styles.field, compact && styles.compact, error && styles.fieldError].filter(Boolean).join(' ')}
+    >
       <label htmlFor={fieldId} className={styles.label}>
         {label}
       </label>
@@ -27,6 +31,8 @@ export const Select = ({
           value={value}
           defaultValue={defaultValue}
           onChange={onChange}
+          aria-invalid={error ? 'true' : undefined}
+          aria-describedby={errorId}
         >
           {placeholder ? (
             <option value="">{placeholder}</option>
@@ -41,6 +47,11 @@ export const Select = ({
           <Icon name="chevron" size={18} />
         </span>
       </div>
+      {error ? (
+        <div id={errorId} className={styles.error}>
+          {error}
+        </div>
+      ) : null}
     </div>
   );
 };
