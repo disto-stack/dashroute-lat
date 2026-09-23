@@ -1,0 +1,23 @@
+.tabs {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  background: var(--wash);
+  border-radius: var(--radius-menu);
+}
+
+.item {
+  border: 0;
+  background: transparent;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font: 600 14px/1.2 var(--font-body);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.active {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(26, 29, 33, 0.15);
+}
