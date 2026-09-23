@@ -1,0 +1,59 @@
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  font: 600 14px/1.4 var(--font-body);
+  box-shadow: var(--shadow-float);
+  background: var(--card);
+  color: var(--ink);
+}
+
+.success {
+  background: var(--success-tint);
+  color: var(--success);
+}
+
+.danger {
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+
+.warning {
+  background: var(--warning-tint);
+  color: var(--warning);
+}
+
+.icon {
+  display: inline-flex;
+  color: var(--blue);
+}
+
+.text {
+  flex: 1;
+}
+
+.action {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: 700 14px/1.4 var(--font-body);
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dismiss {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+}

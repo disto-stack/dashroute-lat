@@ -83,4 +83,4 @@ test('calls onClick when pressed', async () => {
 });
 ```
 
-Only components with a `.native.tsx` implementation and real interaction have a `.test.tsx` today (`Button`, `Input`, `BottomSheet`, `MissionCard`, `Switch`, `Tabs`, `ProfileMenu`, `Banner`). `turbo.json`'s `test:native` task picks up this script the same way `test` does, so both can run in CI once the pipeline exists.
+Only components with a `.native.tsx` implementation and real interaction have a `.test.tsx` today (`Button`, `Input`, `BottomSheet`, `MissionCard`, `Switch`, `Tabs`, `ProfileMenu`, `Banner`, `Toast`). `turbo.json`'s `test:native` task picks up this script the same way `test` does, so both can run in CI once the pipeline exists.
