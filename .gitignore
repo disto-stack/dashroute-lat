@@ -24,6 +24,14 @@ coverage/
 .nyc_output/
 *.lcov
 
+storybook-static/
+storybook.requires.ts
+storybook.requires.js
+
+playwright-report/
+test-results/
+.vitest-cache/
+
 *.exe
 *.exe~
 *.dll

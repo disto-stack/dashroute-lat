@@ -1,0 +1,43 @@
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 20px 28px;
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  background: var(--card);
+  box-shadow: var(--shadow-sheet);
+  color: var(--ink);
+}
+
+.handle {
+  align-self: center;
+  width: 40px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--handle);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0;
+  font: 800 30px/1 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--target);
+  height: var(--target);
+  border: 0;
+  border-radius: 22px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}

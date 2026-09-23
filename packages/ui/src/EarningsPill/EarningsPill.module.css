@@ -1,0 +1,25 @@
+.pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: var(--pill-height);
+  padding: 0 16px;
+  border: 0;
+  border-radius: 26px;
+  background: var(--card);
+  box-shadow: var(--shadow-float);
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.micro {
+  font: 600 11px/1 var(--font-body);
+  color: var(--muted);
+}
+
+.amount {
+  font: 800 17px/1.2 var(--font-display);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}

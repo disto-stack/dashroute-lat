@@ -11,11 +11,18 @@
     "test": {
       "dependsOn": ["^test"]
     },
+    "test:native": {
+      "dependsOn": ["^test:native"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "storybook": {
       "cache": false,
       "persistent": true
     }

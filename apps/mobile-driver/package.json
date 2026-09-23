@@ -1,9 +1,16 @@
 {
   "name": "dashroute-mobile-driver",
-  "main": "expo-router/entry",
+  "main": "index.js",
   "version": "1.0.0",
   "dependencies": {
+    "@dashroute/ui": "workspace:*",
+    "@dashroute/ui-tokens": "workspace:*",
     "@expo/ui": "~57.0.19",
+    "@gorhom/bottom-sheet": "^5.2.14",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@storybook/addon-ondevice-actions": "^10.6.0",
+    "@storybook/addon-ondevice-controls": "^10.6.0",
+    "@storybook/react-native": "^10.6.0",
     "axios": "^1.20.0",
     "expo": "~57.0.24",
     "expo-constants": "~57.0.19",
@@ -28,9 +35,7 @@
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
     "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.10.1",
-    "@dashroute/ui-tokens": "workspace:*",
-    "@dashroute/ui": "workspace:*"
+    "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
@@ -42,7 +47,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "storybook": "EXPO_PUBLIC_STORYBOOK_ENABLED=true expo start"
   },
   "private": true
 }

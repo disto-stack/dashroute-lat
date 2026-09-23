@@ -1,34 +1,84 @@
+/*
+ * DashRoute design tokens.
+ *
+ * Fonts are not bundled here — every consuming app must load them itself:
+ * <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+ *
+ * Breakpoints (media queries cannot read CSS variables, copy the numbers):
+ *   bp-tablet: 640px, bp-desktop: 1024px, bp-wide: 1440px
+ */
 :root {
-  --brand-primary: #208AEF;
-  --brand-secondary: #1A1A2E;
-  
-  --semantic-success: #22C55E;
-  --semantic-warning: #F59E0B;
-  --semantic-error: #EF4444;
-  --semantic-info: #3B82F6;
-  
-  --neutral-50: #F9FAFB;
-  --neutral-100: #F3F4F6;
-  --neutral-200: #E5E7EB;
-  --neutral-300: #D1D5DB;
-  --neutral-400: #9CA3AF;
-  --neutral-500: #6B7280;
-  --neutral-600: #4B5563;
-  --neutral-700: #374151;
-  --neutral-800: #1F2937;
-  --neutral-900: #111827;
-  --neutral-950: #030712;
+  /* Color */
+  --paper: #f3efe6;
+  --card: #fffdf8;
+  --wash: #ece7db;
+  --ink: #1a1d21;
+  --muted: #5b6270;
+  --line: #ded7c8;
+  --border-strong: #857f70;
+  --blue: #2b45d9;
+  --on-blue: #ffffff;
+  --on-blue-soft: #ffffffe0;
+  --on-blue-wash: #ffffff33;
+  --success: #17693f;
+  --success-tint: #dfeedf;
+  --danger: #b42318;
+  --danger-tint: #f8e1de;
+  --handle: #d9d2c2;
+  --map-ground: #eae5d8;
+  --map-water: #c9dae2;
+  --map-park: #d5e3c8;
+  --map-road-minor: #f7f3e9;
+  --map-road-major: #fffdf8;
+  --blue-tint: #e1e6fa;
+  --warning: #7a4e00;
+  --warning-tint: #f6e8c6;
+  --row-hover: #f8f4ea;
+  --scrim: #1a1d2166;
 
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-2xl: 48px;
+  /* Typography */
+  --font-display: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Radius */
+  --radius-sm: 14px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-menu: 24px;
+  --radius-xl: 28px;
+  --radius-2xl: 32px;
+  --radius-pill: 999px;
+  --radius-xs: 8px;
+  --radius-panel: 12px;
+
+  /* Size */
+  --target: 44px;
+  --control: 56px;
+  --control-lg: 60px;
+  --pill-height: 52px;
+  --control-compact: 40px;
+  --row-compact: 40px;
+  --row-default: 52px;
+  --sidebar: 240px;
+  --sidebar-rail: 72px;
+  --detail-panel: 420px;
+  --content-max: 1440px;
+
+  /* Shadow */
+  --shadow-float: 0 10px 30px rgba(26, 29, 33, 0.18);
+  --shadow-menu: 0 14px 36px rgba(26, 29, 33, 0.18);
+  --shadow-sheet: 0 -12px 40px rgba(26, 29, 33, 0.2);
+  --shadow-mission: 0 10px 30px rgba(26, 29, 33, 0.28);
+  --shadow-offer: 0 24px 60px rgba(26, 29, 33, 0.4);
+  --shadow-popover: 0 8px 24px rgba(26, 29, 33, 0.14);
+  --shadow-drawer: -12px 0 40px rgba(26, 29, 33, 0.16);
 }

@@ -1,0 +1,61 @@
+.wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 14px/1.4 var(--font-body);
+  color: var(--ink);
+}
+
+.table th {
+  padding: 0 16px;
+  height: 44px;
+  background: var(--paper);
+  color: var(--muted);
+  font: 600 12px/1.3 var(--font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+.table td {
+  padding: 0 16px;
+  height: var(--row-default);
+  border-bottom: 1px solid var(--line);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.dense .table td {
+  height: var(--row-compact);
+}
+
+.table td.strong {
+  font-weight: 600;
+}
+
+.table tr.clickable {
+  cursor: pointer;
+}
+
+.table tr.clickable:hover {
+  background: var(--row-hover);
+}
+
+.table tr.selected,
+.table tr.selected:hover {
+  background: var(--blue-tint);
+}
+
+.table tr:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: -3px;
+}

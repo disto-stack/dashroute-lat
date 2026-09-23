@@ -1,0 +1,11 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.word {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
