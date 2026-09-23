@@ -16,6 +16,8 @@ import {
   SlidersHorizontal,
   Menu,
   AlertCircle,
+  Eye,
+  EyeOff,
   type LucideIcon,
 } from 'lucide-react';
 import { IconName, IconProps } from './Icon.types';
@@ -37,6 +39,8 @@ const ICONS: Record<IconName, LucideIcon> = {
   sliders: SlidersHorizontal,
   menu: Menu,
   alert: AlertCircle,
+  eye: Eye,
+  'eye-off': EyeOff,
 };
 
 export const Icon = ({ name, size = 20, strokeWidth = 2, color = 'currentColor' }: IconProps) => {

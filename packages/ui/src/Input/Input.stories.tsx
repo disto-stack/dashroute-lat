@@ -38,6 +38,20 @@ export const Compact: Story = {
 
 export const Password: Story = {
   args: { label: 'Contraseña', type: 'password', placeholder: '••••••••' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByLabelText('Contraseña');
+    await userEvent.type(input, 'secreto123');
+    await expect(input).toHaveAttribute('type', 'password');
+
+    const toggle = canvas.getByRole('button', { name: 'Mostrar contraseña' });
+    await userEvent.click(toggle);
+    await expect(input).toHaveAttribute('type', 'text');
+    await expect(canvas.getByRole('button', { name: 'Ocultar contraseña' })).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Ocultar contraseña' }));
+    await expect(input).toHaveAttribute('type', 'password');
+  },
 };
 
 export const WithValue: Story = {

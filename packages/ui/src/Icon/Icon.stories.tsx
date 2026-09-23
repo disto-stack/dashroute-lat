@@ -18,6 +18,8 @@ const NAMES: IconName[] = [
   'user',
   'sliders',
   'menu',
+  'eye',
+  'eye-off',
 ];
 
 const meta = {
