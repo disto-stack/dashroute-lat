@@ -1,18 +1,25 @@
 import '@testing-library/react-native/matchers';
 
-// expo-haptics tries to reach a live Metro dev-server socket at import time,
-// which only breaks under Jest here (not in packages/ui) because this app
-// has a real app.json. Haptics can't do anything headless anyway.
+jest.mock('react-native-reanimated', () => {
+  const React = require('react');
+  const useSharedValue = (initial: unknown) => React.useRef({ value: initial }).current;
+  return {
+    __esModule: true,
+    default: { createAnimatedComponent: (Component: unknown) => Component },
+    useSharedValue,
+    useAnimatedProps: (factory: () => Record<string, unknown>) => factory(),
+    withRepeat: (animation: unknown) => animation,
+    withSequence: (...animations: unknown[]) => animations[animations.length - 1],
+    withTiming: (toValue: unknown) => toValue,
+    Easing: { out: (fn: unknown) => fn, ease: () => 0 },
+  };
+});
+
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
 }));
 
-// lucide-react-native's icon context crashes under this monorepo's pnpm
-// dependency graph (multiple physical "react" copies get resolved across
-// packages, so useContext sees the wrong instance — reproducible even in
-// packages/ui's own Button.test.tsx, unrelated to this app). Icons are
-// decorative; stub every name @dashroute/ui's Icon.native.tsx imports.
 jest.mock('lucide-react-native', () => {
   const { createElement } = require('react');
   const stub = (name: string) => {
