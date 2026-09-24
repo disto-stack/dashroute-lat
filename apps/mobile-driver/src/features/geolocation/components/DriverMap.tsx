@@ -5,7 +5,7 @@ import { Camera, type CameraRef, Map, Marker, type ViewStateChangeEvent } from '
 import { tokens } from '@dashroute/ui-tokens';
 import { buildMapStyle } from '../map-style';
 import { Coordinate } from '../types';
-import { LocationDot } from './LocationDot';
+import { LocationPuck } from './LocationPuck';
 
 const FALLBACK_CENTER: [number, number] = [-74.0721, 4.711];
 const FOLLOW_ZOOM = 16;
@@ -13,9 +13,10 @@ const FOLLOW_ZOOM = 16;
 type DriverMapProps = {
   coords: Coordinate | null;
   style?: ViewStyle;
+  mode?: 'searching' | 'tracking';
 };
 
-export function DriverMap({ coords, style }: DriverMapProps) {
+export function DriverMap({ coords, style, mode = 'searching' }: DriverMapProps) {
   const cameraRef = useRef<CameraRef>(null);
   const [isFollowing, setIsFollowing] = useState(true);
 
@@ -42,8 +43,8 @@ export function DriverMap({ coords, style }: DriverMapProps) {
           trackUserLocation={isFollowing ? 'default' : undefined}
         />
         {coords && (
-          <Marker id="driver-location" lngLat={center}>
-            <LocationDot />
+          <Marker id="driver-location" lngLat={center} anchor="center">
+            <LocationPuck mode={mode} />
           </Marker>
         )}
       </Map>

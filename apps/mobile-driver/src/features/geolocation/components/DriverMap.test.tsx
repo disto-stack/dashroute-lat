@@ -4,8 +4,8 @@ import { DriverMap } from './DriverMap';
 
 const mockEaseTo = jest.fn();
 
-jest.mock('./LocationDot', () => ({
-  LocationDot: () => null,
+jest.mock('./LocationPuck', () => ({
+  LocationPuck: () => null,
 }));
 
 jest.mock('@maplibre/maplibre-react-native', () => {
