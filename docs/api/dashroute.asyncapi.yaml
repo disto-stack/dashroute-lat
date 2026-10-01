@@ -1,10 +1,10 @@
 asyncapi: 2.6.0
 info:
-  title: DashRoute - Geolocation Real-Time API
+  title: DashRoute - AsyncAPI & Real-Time Events
   version: 1.0.0
   description: >
-    AsyncAPI documentation for the DashRoute Geolocation Service. 
-    This service uses WebSockets to receive high-frequency location updates and status changes from courier devices.
+    AsyncAPI documentation for DashRoute's asynchronous communications,
+    including WebSockets (Geolocation, Notifications) and RabbitMQ Event-Driven messaging.
 
 servers:
   geolocation-service:
@@ -13,6 +13,16 @@ servers:
     description: Local development Geolocation WebSocket server
     security:
       - bearerAuth: []
+  notifications-service:
+    url: localhost:4004
+    protocol: ws
+    description: Local development Notifications WebSocket server
+    security:
+      - bearerAuth: []
+  rabbitmq-broker:
+    url: localhost:5672
+    protocol: amqp
+    description: RabbitMQ Message Broker (dashroute.events exchange)
 
 channels:
   /ws:
@@ -23,13 +33,30 @@ channels:
       message:
         $ref: '#/components/messages/PingMessage'
 
+  /devices/ws:
+    description: Real-time WebSocket channel for driver notifications.
+    subscribe:
+      summary: Driver receives real-time notification events (e.g. mission assignment)
+      operationId: receiveNotification
+      message:
+        oneOf:
+          - $ref: '#/components/messages/MissionAssignedWsMessage'
+
+  dashroute.events/mission.assigned:
+    description: Event published when an order/mission is assigned to a courier.
+    subscribe:
+      summary: Mission Assigned Event
+      operationId: onMissionAssigned
+      message:
+        $ref: '#/components/messages/MissionAssignedRabbitMessage'
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: A valid DashRoute JWT containing the COURIER role. Must be passed via the `Authorization` HTTP header during the WebSocket handshake.
+      description: A valid DashRoute JWT passed via the `Authorization` HTTP header or query parameter during handshake.
 
   messages:
     PingMessage:
@@ -39,6 +66,22 @@ components:
       contentType: application/json
       payload:
         $ref: '#/components/schemas/PingPayload'
+
+    MissionAssignedWsMessage:
+      name: MissionAssignedWsPayload
+      title: Mission Assigned Notification Payload
+      summary: WebSocket event sent to driver when a new mission is assigned.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/MissionAssignedWsPayload'
+
+    MissionAssignedRabbitMessage:
+      name: MissionAssignedRabbitPayload
+      title: Mission Assigned RabbitMQ Event
+      summary: Event envelope emitted on dashroute.events exchange with routing key mission.assigned.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/MissionAssignedRabbitPayload'
 
   schemas:
     PingPayload:
@@ -62,3 +105,54 @@ components:
             - BUSY
           description: The current operational status of the courier.
           example: ONLINE
+
+    MissionAssignedWsPayload:
+      type: object
+      properties:
+        event:
+          type: string
+          example: mission_assigned
+        data:
+          type: object
+          properties:
+            missionId:
+              type: string
+              example: ord_1a2b3c4d5e6f7g8h9i0j1k2l
+            driverId:
+              type: string
+              example: cur_1a2b3c4d5e6f7g8h9i0j1k2l
+            pickupAddress:
+              type: string
+              example: Calle 100 # 15-20
+            deliveryAddress:
+              type: string
+              example: Cra 7 # 72-41
+
+    MissionAssignedRabbitPayload:
+      type: object
+      properties:
+        eventId:
+          type: string
+          format: uuid
+          example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        eventType:
+          type: string
+          example: mission.assigned
+        timestamp:
+          type: string
+          format: date-time
+        payload:
+          type: object
+          properties:
+            missionId:
+              type: string
+              example: ord_1a2b3c4d5e6f7g8h9i0j1k2l
+            driverId:
+              type: string
+              example: cur_1a2b3c4d5e6f7g8h9i0j1k2l
+            pickupAddress:
+              type: string
+              example: Calle 100 # 15-20
+            deliveryAddress:
+              type: string
+              example: Cra 7 # 72-41
