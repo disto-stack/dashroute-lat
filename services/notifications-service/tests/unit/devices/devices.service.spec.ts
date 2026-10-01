@@ -59,6 +59,20 @@ describe('DevicesService', () => {
     });
   });
 
+  describe('findTokenByUserId', () => {
+    it('returns token string if it exists', async () => {
+      const result = await devicesService.findTokenByUserId('usr-1');
+      expect(result).toBe('token-123');
+    });
+
+    it('returns null if token does not exist', async () => {
+      dbMock.select().where().limit.mockResolvedValueOnce([]);
+      
+      const result = await devicesService.findTokenByUserId('usr-2');
+      expect(result).toBeNull();
+    });
+  });
+
   describe('findTokenByDriverId', () => {
     it('returns token string if it exists', async () => {
       const result = await devicesService.findTokenByDriverId('driver-1');

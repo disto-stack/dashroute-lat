@@ -23,18 +23,18 @@ export class DevicesController {
     }
 
     const token = authHeader.replace('Bearer ', '');
-    let driverId: string;
+    let userId: string;
 
     try {
       const payloadBase64 = token.split('.')[1];
       const payload = JSON.parse(Buffer.from(payloadBase64, 'base64').toString());
-      driverId = payload.sub || payload.id;
-      if (!driverId) throw new Error('No sub/id in JWT');
+      userId = payload.sub || payload.id;
+      if (!userId) throw new Error('No sub/id in JWT');
     } catch (e) {
       throw new UnauthorizedException('Invalid JWT');
     }
 
-    await this.devicesService.registerToken(driverId, body.expoPushToken);
+    await this.devicesService.registerToken(userId, body.expoPushToken);
     return { success: true };
   }
 }

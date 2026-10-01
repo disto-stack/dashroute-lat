@@ -10,11 +10,11 @@ export class DevicesService {
 
   constructor(@Inject(databaseProvider.DRIZZLE_DB) private readonly db: databaseProvider.DrizzleDb) {}
 
-  async registerToken(driverId: string, expoPushToken: string): Promise<void> {
+  async registerToken(userId: string, expoPushToken: string): Promise<void> {
     const existing = await this.db
       .select()
       .from(deviceTokens)
-      .where(eq(deviceTokens.driverId, driverId))
+      .where(eq(deviceTokens.userId, userId))
       .limit(1);
 
     if (existing.length > 0) {
@@ -24,15 +24,15 @@ export class DevicesService {
           expoPushToken,
           updatedAt: new Date(),
         })
-        .where(eq(deviceTokens.driverId, driverId));
-      this.logger.log(`Token updated for driver ${driverId}`);
+        .where(eq(deviceTokens.userId, userId));
+      this.logger.log(`Token updated for user ${userId}`);
     } else {
       await this.db.insert(deviceTokens).values({
         id: `tok_${uuidv4().replace(/-/g, '')}`,
-        driverId,
+        userId,
         expoPushToken,
       });
-      this.logger.log(`Token registered for driver ${driverId}`);
+      this.logger.log(`Token registered for user ${userId}`);
     }
   }
 
@@ -41,13 +41,17 @@ export class DevicesService {
     this.logger.log(`Token removed: ${expoPushToken}`);
   }
 
-  async findTokenByDriverId(driverId: string): Promise<string | null> {
+  async findTokenByUserId(userId: string): Promise<string | null> {
     const records = await this.db
       .select()
       .from(deviceTokens)
-      .where(eq(deviceTokens.driverId, driverId))
+      .where(eq(deviceTokens.userId, userId))
       .limit(1);
     
     return records.length > 0 ? records[0].expoPushToken : null;
+  }
+
+  async findTokenByDriverId(driverId: string): Promise<string | null> {
+    return this.findTokenByUserId(driverId);
   }
 }

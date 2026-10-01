@@ -3,6 +3,7 @@ import { AppState, AppStateStatus } from 'react-native';
 import { NotificationsSocket } from '../services/notifications-socket';
 import { useAuth } from '@/context/AuthContext';
 import { getTokens } from '@/features/auth/services/token-storage';
+import { api, API_URL } from '@/lib/api';
 import * as Notifications from 'expo-notifications';
 
 export const useDriverNotifications = (onNewMission: () => void) => {
@@ -21,25 +22,14 @@ export const useDriverNotifications = (onNewMission: () => void) => {
         if (status === 'granted') {
           try {
             const tokenData = await Notifications.getExpoPushTokenAsync();
-            const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://api.dashroute.localhost';
-            
-            await fetch(`${apiUrl}/devices/register-token`, {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}` 
-              },
-              body: JSON.stringify({ expoPushToken: tokenData.data })
-            });
+            await api.post('/devices/register-token', { expoPushToken: tokenData.data });
           } catch (tokenErr) {
             console.warn('Can\'t get push token (Firebase missing). Continuing with WebSocket...', tokenErr);
           }
         }
 
-        const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://api.dashroute.localhost';
-        const url = apiUrl.replace(/\/api\/v1\/?$/, '');
-        
-        socketRef.current = new NotificationsSocket(url, accessToken, () => {
+        const wsUrl = API_URL.replace(/\/api\/v1\/?$/, '');
+        socketRef.current = new NotificationsSocket(wsUrl, accessToken, () => {
           onNewMission();
         });
 

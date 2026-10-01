@@ -16,6 +16,8 @@ tags:
     description: User registration, courier onboarding, credential verification, and token lifecycle (Auth Service).
   - name: Geolocation
     description: Real-time WebSocket connection for courier GPS and status updates (Geolocation Service).
+  - name: Notifications
+    description: Device push token registration and notifications WebSocket (Notifications Service).
   - name: Health
     description: System and service health checks.
 
@@ -424,6 +426,50 @@ paths:
       responses:
         '101':
           description: Switching Protocols. The connection is successfully upgraded to a WebSocket.
+  /devices/register-token:
+    post:
+      tags:
+        - Notifications
+      summary: Register Device Push Token
+      description: Registers or updates an Expo push token for the authenticated user.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDeviceTokenRequest'
+      responses:
+        '200':
+          description: Push token registered or updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /devices/ws:
+    get:
+      tags:
+        - Notifications
+      summary: Notifications WebSocket Connection
+      description: >
+        **NOTE: This is a WebSocket (ws://) endpoint.**
+        
+        Initiates a persistent WebSocket connection for notifications. Supports passing JWT via `token` query param or `Authorization: Bearer <token>` header.
+      security:
+        - BearerAuth: []
+      responses:
+        '101':
+          description: Switching Protocols.
         '401':
           $ref: '#/components/responses/UnauthorizedError'
 
@@ -778,6 +824,16 @@ components:
         updatedAt:
           type: string
           format: date-time
+
+    RegisterDeviceTokenRequest:
+      type: object
+      required:
+        - expoPushToken
+      properties:
+        expoPushToken:
+          type: string
+          example: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+          description: Expo push token retrieved from mobile client SDK.
 
   responses:
     BadRequestError:
