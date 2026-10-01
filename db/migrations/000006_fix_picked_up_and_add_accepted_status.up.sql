@@ -2,6 +2,8 @@
 
 CREATE TYPE order_status_new AS ENUM ('PENDING', 'ASSIGNED', 'ACCEPTED', 'IN_TRANSIT', 'DELIVERED', 'CANCELLED');
 
+ALTER TABLE orders ALTER COLUMN status DROP DEFAULT;
+
 ALTER TABLE orders 
   ALTER COLUMN status TYPE order_status_new 
   USING (
@@ -10,6 +12,8 @@ ALTER TABLE orders
       ELSE status::text
     END
   )::order_status_new;
+
+ALTER TABLE orders ALTER COLUMN status SET DEFAULT 'PENDING'::order_status_new;
 
 DROP TYPE order_status;
 

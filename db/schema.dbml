@@ -82,3 +82,21 @@ Table audit_logs {
     order_id [name: 'idx_audit_logs_order_id']
   }
 }
+
+Table device_tokens {
+  id varchar(32) [pk, note: 'Prefixed identifier (tok_...)']
+  driver_id varchar(32) [unique, not null, ref: - couriers.id, note: 'Courier 1:1 token assignment']
+  expo_push_token varchar(255) [not null, note: 'Expo SDK device token']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    driver_id [name: 'idx_device_tokens_driver_id']
+  }
+}
+
+Table notifications_processed_events {
+  event_id varchar(36) [pk, note: 'UUID v4 of the processed event for idempotency']
+  processed_at timestamptz [not null, default: `now()`]
+}
+
