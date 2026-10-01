@@ -1,0 +1,3 @@
+ALTER TABLE device_tokens
+  ALTER COLUMN id TYPE VARCHAR(32),
+  ALTER COLUMN driver_id TYPE VARCHAR(32);
