@@ -2,6 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { WebSocketChannel } from '../../../../src/channels/websocket/websocket.channel.js';
 import { NotificationPayload } from '../../../../src/shared/types/notification-payload.type.js';
 import { Socket, Server } from 'socket.io';
+import * as jwt from 'jsonwebtoken';
+
+vi.mock('jsonwebtoken', () => ({
+  default: {
+    verify: vi.fn(),
+  },
+  verify: vi.fn(),
+}));
 
 const mockLogger = {
   info: vi.fn(),
@@ -10,16 +18,22 @@ const mockLogger = {
   debug: vi.fn(),
 };
 
+const mockConfigService = {
+  get: vi.fn().mockReturnValue('test-secret'),
+};
+
 describe('WebSocketChannel', () => {
   let channel: WebSocketChannel;
   let serverMock: any;
 
   beforeEach(() => {
-    channel = new WebSocketChannel(mockLogger as any);
+    vi.clearAllMocks();
+    channel = new WebSocketChannel(mockLogger as any, mockConfigService as any);
 
     serverMock = {
       to: vi.fn().mockReturnThis(),
       emit: vi.fn(),
+      use: vi.fn(),
     };
 
     channel.server = serverMock as unknown as Server;
@@ -49,10 +63,60 @@ describe('WebSocketChannel', () => {
     });
   });
 
+  describe('afterInit (Middleware)', () => {
+    it('registers a middleware', () => {
+      channel.afterInit(serverMock);
+      expect(serverMock.use).toHaveBeenCalled();
+    });
+
+    describe('middleware execution', () => {
+      let middleware: any;
+
+      beforeEach(() => {
+        channel.afterInit(serverMock);
+        middleware = serverMock.use.mock.calls[0][0];
+      });
+
+      it('calls next with error if no auth header', () => {
+        const socketMock = { handshake: { headers: {} } };
+        const nextMock = vi.fn();
+        middleware(socketMock, nextMock);
+        expect(nextMock).toHaveBeenCalledWith(expect.any(Error));
+        expect(nextMock.mock.calls[0][0].message).toBe('Authentication token missing');
+      });
+
+      it('calls next with error if jwt.verify fails', () => {
+        vi.mocked(jwt.verify).mockImplementationOnce(() => {
+          throw new Error('invalid');
+        });
+        const socketMock = {
+          handshake: { headers: { authorization: 'Bearer bad-token' } },
+          id: '1',
+        };
+        const nextMock = vi.fn();
+        middleware(socketMock, nextMock);
+        expect(nextMock).toHaveBeenCalledWith(expect.any(Error));
+        expect(nextMock.mock.calls[0][0].message).toBe('Invalid or expired authentication token');
+      });
+
+      it('populates socket.data.driverId and calls next if token is valid', () => {
+        vi.mocked(jwt.verify).mockReturnValueOnce({ sub: 'driver-123' } as any);
+        const socketMock = {
+          handshake: { headers: { authorization: 'Bearer good-token' } },
+          data: {},
+        };
+        const nextMock = vi.fn();
+        middleware(socketMock, nextMock);
+        expect((socketMock.data as any).driverId).toBe('driver-123');
+        expect(nextMock).toHaveBeenCalledWith();
+      });
+    });
+  });
+
   describe('handleConnection', () => {
-    it('disconnects if no auth header', () => {
+    it('disconnects if no driverId in data (failsafe)', () => {
       const clientMock = {
-        handshake: { headers: {} },
+        data: {},
         disconnect: vi.fn(),
       };
 
@@ -61,13 +125,10 @@ describe('WebSocketChannel', () => {
       expect(clientMock.disconnect).toHaveBeenCalled();
     });
 
-    it('joins room if token is valid', () => {
-      const payloadObj = { sub: 'driver-123' };
-      const tokenStr = 'fakeHeader.' + Buffer.from(JSON.stringify(payloadObj)).toString('base64') + '.fakeSignature';
-
+    it('joins room using driverId from socket.data', () => {
       const clientMock = {
         id: 'client-1',
-        handshake: { headers: { authorization: `Bearer ${tokenStr}` } },
+        data: { driverId: 'driver-123' },
         join: vi.fn(),
         disconnect: vi.fn(),
       };
@@ -76,17 +137,6 @@ describe('WebSocketChannel', () => {
 
       expect(clientMock.disconnect).not.toHaveBeenCalled();
       expect(clientMock.join).toHaveBeenCalledWith('driver:driver-123');
-    });
-
-    it('disconnects if token payload is invalid', () => {
-      const clientMock = {
-        handshake: { headers: { authorization: `Bearer not-a-jwt` } },
-        disconnect: vi.fn(),
-      };
-
-      channel.handleConnection(clientMock as unknown as Socket);
-
-      expect(clientMock.disconnect).toHaveBeenCalled();
     });
   });
 });

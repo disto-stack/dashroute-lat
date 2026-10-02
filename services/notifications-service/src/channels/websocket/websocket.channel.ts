@@ -3,17 +3,20 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { ConfigService } from '@nestjs/config';
+import jwt from 'jsonwebtoken';
 import { NotificationChannel } from '../notification-channel.interface.js';
 import { NotificationPayload } from '../../shared/types/notification-payload.type.js';
 
 @Injectable()
 @WebSocketGateway({ path: '/ws', cors: true })
 export class WebSocketChannel
-  implements NotificationChannel, OnGatewayConnection, OnGatewayDisconnect
+  implements NotificationChannel, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   readonly channelId = 'websocket';
 
@@ -23,7 +26,42 @@ export class WebSocketChannel
   constructor(
     @InjectPinoLogger(WebSocketChannel.name)
     private readonly logger: PinoLogger,
+    @Inject(ConfigService)
+    private readonly configService: ConfigService,
   ) {}
+  afterInit(server: Server) {
+    const secret =
+      this.configService.get<string>('JWT_SECRET') ||
+      'dashroute-default-jwt-secret-replace-in-prod';
+
+    server.use((socket, next) => {
+      try {
+        const authHeader =
+          socket.handshake.headers.authorization || socket.handshake.auth?.token;
+        if (!authHeader) {
+          return next(new Error('Authentication token missing'));
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const payload = jwt.verify(token, secret) as any;
+
+        if (!payload || !payload.sub) {
+          return next(new Error('Invalid token payload'));
+        }
+
+        socket.data.driverId = payload.sub;
+
+        next();
+      } catch (err) {
+        this.logger.warn(
+          { clientId: socket.id, error: (err as Error).message },
+          'WebSocket connection rejected due to invalid token',
+        );
+        
+        next(new Error('Invalid or expired authentication token'));
+      }
+    });
+  }
 
   canHandle(_notification: NotificationPayload): boolean {
     return true;
@@ -41,24 +79,13 @@ export class WebSocketChannel
 
   handleConnection(client: Socket) {
     try {
-      const authHeader = client.handshake.headers.authorization || client.handshake.auth?.token;
-      if (!authHeader) {
-        this.logger.warn({ clientId: client.id }, 'WebSocket connection attempt without token');
+      const driverId = client.data.driverId;
+      if (!driverId) {
+        this.logger.warn({ clientId: client.id }, 'Missing driverId in client data after auth middleware');
         client.disconnect();
         return;
       }
 
-      // Simplistic extraction for MVP (in production use complete JWT verification)
-      const token = authHeader.replace('Bearer ', '');
-      const payload = this.decodeJwtPayload(token);
-
-      if (!payload || !payload.sub) {
-        this.logger.warn({ clientId: client.id }, 'Invalid JWT payload in WebSocket connection');
-        client.disconnect();
-        return;
-      }
-
-      const driverId = payload.sub; // Assumes 'sub' contains the driver ID
       const room = `driver:${driverId}`;
       client.join(room);
       this.logger.info({ clientId: client.id, room }, 'WebSocket client joined room');
@@ -72,19 +99,4 @@ export class WebSocketChannel
     this.logger.info({ clientId: client.id }, 'WebSocket client disconnected');
   }
 
-  private decodeJwtPayload(token: string): any {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join(''),
-      );
-      return JSON.parse(jsonPayload);
-    } catch {
-      return null;
-    }
-  }
 }
