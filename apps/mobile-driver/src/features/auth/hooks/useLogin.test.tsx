@@ -17,7 +17,8 @@ const loginResponse: LoginResponse = {
 
 function renderUseLogin(onSuccess?: (response: LoginResponse) => void) {
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    // gcTime 0: the default 5 min gc timer keeps the Jest process alive after the run.
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false, gcTime: 0 } },
   });
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

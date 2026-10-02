@@ -3,6 +3,7 @@ import { AppState } from 'react-native';
 import { useDriverNotifications } from './useDriverNotifications';
 import { useAuth } from '@/context/AuthContext';
 import { getTokens } from '@/features/auth/services/token-storage';
+import { api } from '@/lib/api';
 import * as Notifications from 'expo-notifications';
 import { NotificationsSocket } from '../services/notifications-socket';
 
@@ -14,6 +15,11 @@ jest.mock('@/features/auth/services/token-storage', () => ({
   getTokens: jest.fn(),
 }));
 
+jest.mock('@/lib/api', () => ({
+  api: { post: jest.fn() },
+  API_URL: 'https://api.dashroute.localhost/api/v1',
+}));
+
 jest.mock('expo-notifications', () => ({
   requestPermissionsAsync: jest.fn(),
   getExpoPushTokenAsync: jest.fn(),
@@ -23,17 +29,15 @@ jest.mock('../services/notifications-socket');
 
 describe('useDriverNotifications', () => {
   const mockOnNewMission = jest.fn();
-  const mockFetch = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    global.fetch = mockFetch;
-    
+
     (useAuth as jest.Mock).mockReturnValue({ user: { id: 'driver-1' } });
     (getTokens as jest.Mock).mockResolvedValue({ accessToken: 'token-123' });
     (Notifications.requestPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
     (Notifications.getExpoPushTokenAsync as jest.Mock).mockResolvedValue({ data: 'ExponentPushToken[123]' });
-    mockFetch.mockResolvedValue({ ok: true });
+    (api.post as jest.Mock).mockResolvedValue({ data: {} });
   });
 
   it('does nothing if user is not authenticated', () => {
@@ -54,20 +58,12 @@ describe('useDriverNotifications', () => {
       expect(Notifications.requestPermissionsAsync).toHaveBeenCalled();
       expect(Notifications.getExpoPushTokenAsync).toHaveBeenCalled();
       
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.dashroute.localhost/api/v1/devices/register-token',
-        expect.objectContaining({
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer token-123',
-          },
-          body: JSON.stringify({ expoPushToken: 'ExponentPushToken[123]' }),
-        })
-      );
-      
+      expect(api.post).toHaveBeenCalledWith('/devices/register-token', {
+        expoPushToken: 'ExponentPushToken[123]',
+      });
+
       expect(NotificationsSocket).toHaveBeenCalledWith(
-        expect.any(String),
+        'https://api.dashroute.localhost',
         'token-123',
         expect.any(Function)
       );
