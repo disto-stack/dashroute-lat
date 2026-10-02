@@ -4,5 +4,8 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true
-  }
+  },
+  "generateOptions": {},
+  "entryFile": "main",
+  "nodeOptions": ["--import=./dist/instrumentation.js"]
 }

@@ -3,6 +3,13 @@ import { MissionAssignedConsumer } from '../../../src/consumers/mission-assigned
 import { NotificationDispatcher } from '../../../src/dispatcher/notification.dispatcher.js';
 import { DevicesService } from '../../../src/devices/devices.service.js';
 
+const mockLogger = {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  debug: vi.fn(),
+};
+
 describe('MissionAssignedConsumer', () => {
   let consumer: MissionAssignedConsumer;
   let dispatcherMock: import('vitest').Mocked<NotificationDispatcher>;
@@ -34,7 +41,12 @@ describe('MissionAssignedConsumer', () => {
       nack: vi.fn(),
     };
 
-    consumer = new MissionAssignedConsumer(dispatcherMock, devicesServiceMock, dbMock);
+    consumer = new MissionAssignedConsumer(
+      dispatcherMock,
+      devicesServiceMock,
+      dbMock,
+      mockLogger as any,
+    );
     // @ts-ignore
     consumer.channel = channelMock;
   });
@@ -42,14 +54,13 @@ describe('MissionAssignedConsumer', () => {
   const validMessage = {
     content: Buffer.from(
       JSON.stringify({
-        eventId: 'event-123',
-        eventType: 'mission.assigned',
+        event_id: 'event-123',
+        event_type: 'delivery.assigned',
         occurredAt: '2026-09-24T01:00:00Z',
         payload: {
-          missionId: 'm1',
-          driverId: 'd1',
-          pickupAddress: 'A',
-          deliveryAddress: 'B',
+          orderId: 'o1',
+          courierId: 'c1',
+          assignedAt: '2026-09-24T01:00:00Z',
         },
       })
     ),
@@ -60,15 +71,14 @@ describe('MissionAssignedConsumer', () => {
     await consumer.handleMessage(validMessage);
 
     expect(dispatcherMock.dispatch).toHaveBeenCalledWith({
-      missionId: 'm1',
-      driverId: 'd1',
-      title: 'New Mission Assigned!',
-      body: 'Pickup: A\\nDropoff: B',
+      missionId: 'o1',
+      driverId: 'c1',
+      title: 'New Delivery Assigned!',
+      body: 'You have been assigned to order: o1',
       data: {
-        missionId: 'm1',
-        driverId: 'd1',
-        pickupAddress: 'A',
-        deliveryAddress: 'B',
+        orderId: 'o1',
+        courierId: 'c1',
+        assignedAt: '2026-09-24T01:00:00Z',
       },
       expoPushToken: 'push-token',
       recipientPreferences: {},
@@ -88,7 +98,7 @@ describe('MissionAssignedConsumer', () => {
 
   it('nacks (requeue=false) if payload is invalid', async () => {
     const invalidMessage = {
-      content: Buffer.from(JSON.stringify({ eventType: 'wrong.type' })),
+      content: Buffer.from(JSON.stringify({ event_type: 'wrong.type' })),
     };
 
     // @ts-ignore

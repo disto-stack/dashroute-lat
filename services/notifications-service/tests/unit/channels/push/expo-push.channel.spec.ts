@@ -13,6 +13,13 @@ vi.mock('expo-server-sdk', () => {
   };
 });
 
+const mockLogger = {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  debug: vi.fn(),
+};
+
 describe('ExpoPushChannel', () => {
   let channel: ExpoPushChannel;
   let devicesService: import('vitest').Mocked<DevicesService>;
@@ -29,8 +36,8 @@ describe('ExpoPushChannel', () => {
       removeToken: vi.fn(),
     } as any;
 
-    channel = new ExpoPushChannel(devicesService);
-    
+    channel = new ExpoPushChannel(devicesService, mockLogger as any);
+
     expoInstanceMock = vi.mocked(Expo).mock.results[0].value;
   });
 
@@ -63,7 +70,7 @@ describe('ExpoPushChannel', () => {
       expoInstanceMock.sendPushNotificationsAsync.mockResolvedValueOnce([{ status: 'ok', id: '123' }]);
 
       await expect(channel.send(validPayload)).resolves.toBeUndefined();
-      
+
       expect(expoInstanceMock.sendPushNotificationsAsync).toHaveBeenCalledTimes(1);
       expect(expoInstanceMock.sendPushNotificationsAsync).toHaveBeenCalledWith([
         expect.objectContaining({

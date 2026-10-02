@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UnauthorizedException, Headers, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  Headers,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { DevicesService } from './devices.service.js';
 
 interface RegisterTokenDto {
@@ -7,7 +15,7 @@ interface RegisterTokenDto {
 
 @Controller('devices')
 export class DevicesController {
-  constructor(private readonly devicesService: DevicesService) {}
+  constructor(@Inject(DevicesService) private readonly devicesService: DevicesService) {}
 
   @Post('register-token')
   async registerToken(
@@ -17,7 +25,7 @@ export class DevicesController {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing or invalid authorization header');
     }
-    
+
     if (!body || !body.expoPushToken) {
       throw new BadRequestException('expoPushToken is required');
     }

@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DevicesService } from '../../../src/devices/devices.service.js';
 
+const mockLogger = {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  debug: vi.fn(),
+};
+
 describe('DevicesService', () => {
   let devicesService: DevicesService;
   let dbMock: any;
@@ -33,13 +40,13 @@ describe('DevicesService', () => {
       update: vi.fn().mockReturnValue(updateResultMock),
     };
 
-    devicesService = new DevicesService(dbMock);
+    devicesService = new DevicesService(dbMock, mockLogger as any);
   });
 
   describe('registerToken', () => {
     it('creates or updates a token successfully', async () => {
       await expect(devicesService.registerToken('driver-1', 'new-token')).resolves.toBeUndefined();
-      
+
       expect(dbMock.update).toHaveBeenCalled();
       const updateMock = dbMock.update();
       expect(updateMock.set).toHaveBeenCalledWith({
@@ -53,7 +60,7 @@ describe('DevicesService', () => {
   describe('removeToken', () => {
     it('deletes token successfully without exception', async () => {
       await expect(devicesService.removeToken('token-123')).resolves.toBeUndefined();
-      
+
       expect(dbMock.delete).toHaveBeenCalled();
       expect(dbMock.delete().where).toHaveBeenCalled();
     });
@@ -67,7 +74,7 @@ describe('DevicesService', () => {
 
     it('returns null if token does not exist', async () => {
       dbMock.select().where().limit.mockResolvedValueOnce([]);
-      
+
       const result = await devicesService.findTokenByUserId('usr-2');
       expect(result).toBeNull();
     });
@@ -81,7 +88,7 @@ describe('DevicesService', () => {
 
     it('returns null if token does not exist', async () => {
       dbMock.select().where().limit.mockResolvedValueOnce([]);
-      
+
       const result = await devicesService.findTokenByDriverId('driver-2');
       expect(result).toBeNull();
     });

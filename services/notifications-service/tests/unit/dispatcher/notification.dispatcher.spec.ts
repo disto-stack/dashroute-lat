@@ -3,6 +3,13 @@ import { NotificationDispatcher } from '../../../src/dispatcher/notification.dis
 import { NotificationChannel } from '../../../src/channels/notification-channel.interface.js';
 import { NotificationPayload } from '../../../src/shared/types/notification-payload.type.js';
 
+const mockLogger = {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  debug: vi.fn(),
+};
+
 describe('NotificationDispatcher', () => {
   let dispatcher: NotificationDispatcher;
   let pushChannelMock: import('vitest').Mocked<NotificationChannel>;
@@ -21,7 +28,10 @@ describe('NotificationDispatcher', () => {
       send: vi.fn().mockResolvedValue(undefined),
     };
 
-    dispatcher = new NotificationDispatcher([pushChannelMock, wsChannelMock]);
+    dispatcher = new NotificationDispatcher(
+      [pushChannelMock, wsChannelMock],
+      mockLogger as any,
+    );
   });
 
   const payload: NotificationPayload = {
@@ -53,6 +63,18 @@ describe('NotificationDispatcher', () => {
 
     expect(pushChannelMock.send).toHaveBeenCalledWith(payload);
     expect(wsChannelMock.send).toHaveBeenCalledWith(payload);
+  });
+
+  it('logs an error for each failed channel', async () => {
+    pushChannelMock.canHandle.mockReturnValue(true);
+    wsChannelMock.canHandle.mockReturnValue(false);
+
+    const err = new Error('Push failed');
+    pushChannelMock.send.mockRejectedValue(err);
+
+    await dispatcher.dispatch(payload);
+
+    expect(mockLogger.error).toHaveBeenCalled();
   });
 
   it('returns silently with zero applicable channels', async () => {
