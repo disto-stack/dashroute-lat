@@ -1,4 +1,5 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger, Inject } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Inject } from '@nestjs/common';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import * as amqp from 'amqplib';
 import { NotificationDispatcher } from '../dispatcher/notification.dispatcher.js';
 import * as databaseProvider from '../database/database.provider.js';
@@ -6,22 +7,25 @@ import { processedEvents } from '../database/schema.js';
 import { DevicesService } from '../devices/devices.service.js';
 
 const EXCHANGE_EVENTS = 'dashroute.events';
-const QUEUE_NOTIFICATIONS = 'notifications.mission.assigned.q';
-const ROUTING_KEY = 'mission.assigned';
+const QUEUE_NOTIFICATIONS = 'notifications.delivery.assigned.q';
+const ROUTING_KEY = 'delivery.assigned';
 
 const EXCHANGE_DLX = 'dashroute.dlx';
 const QUEUE_DLX = 'dead.letter.q';
 
 @Injectable()
 export class MissionAssignedConsumer implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger(MissionAssignedConsumer.name);
   private connection: amqp.ChannelModel | null = null;
   private channel: amqp.Channel | null = null;
 
   constructor(
+    @Inject(NotificationDispatcher)
     private readonly dispatcher: NotificationDispatcher,
+    @Inject(DevicesService)
     private readonly devicesService: DevicesService,
     @Inject(databaseProvider.DRIZZLE_DB) private readonly db: databaseProvider.DrizzleDb,
+    @InjectPinoLogger(MissionAssignedConsumer.name)
+    private readonly logger: PinoLogger,
   ) {}
 
   async onModuleInit() {
@@ -48,22 +52,22 @@ export class MissionAssignedConsumer implements OnModuleInit, OnModuleDestroy {
       await this.channel.bindQueue(QUEUE_DLX, EXCHANGE_DLX, '');
 
       await this.channel.assertExchange(EXCHANGE_EVENTS, 'topic', { durable: true });
-      await this.channel.assertQueue(QUEUE_NOTIFICATIONS, { 
+      await this.channel.assertQueue(QUEUE_NOTIFICATIONS, {
         durable: true,
         arguments: {
           'x-dead-letter-exchange': EXCHANGE_DLX,
-        }
+        },
       });
       await this.channel.bindQueue(QUEUE_NOTIFICATIONS, EXCHANGE_EVENTS, ROUTING_KEY);
 
-      this.logger.log(`Listening to RabbitMQ on queue ${QUEUE_NOTIFICATIONS}`);
+      this.logger.info(`Listening to RabbitMQ on queue ${QUEUE_NOTIFICATIONS}`);
 
       this.channel.consume(QUEUE_NOTIFICATIONS, async (msg: any) => {
         if (!msg) return;
         await this.handleMessage(msg);
       });
     } catch (err) {
-      this.logger.error('Failed to connect to RabbitMQ', err);
+      this.logger.error((err as Error).stack, 'Failed to connect to RabbitMQ');
     }
   }
 
@@ -72,14 +76,14 @@ export class MissionAssignedConsumer implements OnModuleInit, OnModuleDestroy {
       const content = msg.content.toString();
       const parsed = JSON.parse(content);
 
-      if (!parsed.eventId || parsed.eventType !== 'mission.assigned' || !parsed.payload) {
-        this.logger.warn('Invalid event envelope', parsed);
+      if (!parsed.event_id || parsed.event_type !== 'delivery.assigned' || !parsed.payload) {
+        this.logger.warn({ parsed }, 'Invalid event envelope');
         this.channel?.nack(msg, false, false);
         return;
       }
 
-      const eventId = parsed.eventId;
-      
+      const eventId = parsed.event_id;
+
       const insertResult = await this.db
         .insert(processedEvents)
         .values({ eventId })
@@ -87,31 +91,34 @@ export class MissionAssignedConsumer implements OnModuleInit, OnModuleDestroy {
         .returning({ insertedId: processedEvents.eventId });
 
       if (insertResult.length === 0) {
-        this.logger.log(`Event ${eventId} already processed, skipping.`);
+        this.logger.info({ eventId }, 'Event already processed, skipping');
         this.channel?.ack(msg);
         return;
       }
 
       const payload = parsed.payload;
-      
-      const pushToken = await this.devicesService.findTokenByDriverId(payload.driverId);
+
+      const pushToken = await this.devicesService.findTokenByDriverId(payload.courierId);
 
       const notificationPayload = {
-        missionId: payload.missionId,
-        driverId: payload.driverId,
-        title: 'New Mission Assigned!',
-        body: `Pickup: ${payload.pickupAddress}\\nDropoff: ${payload.deliveryAddress}`,
+        missionId: payload.orderId,
+        driverId: payload.courierId,
+        title: 'New Delivery Assigned!',
+        body: `You have been assigned to order: ${payload.orderId}`,
         data: payload,
         expoPushToken: pushToken,
-        recipientPreferences: {}
+        recipientPreferences: {},
       };
 
       await this.dispatcher.dispatch(notificationPayload);
 
       this.channel?.ack(msg);
-      this.logger.log(`Successfully processed mission.assigned event ${eventId}`);
+      this.logger.info(
+        { eventId, courierId: payload.courierId, orderId: payload.orderId },
+        'Successfully processed delivery.assigned event',
+      );
     } catch (err) {
-      this.logger.error('Error processing message', err);
+      this.logger.error((err as Error).stack, 'Error processing message');
       this.channel?.nack(msg, false, false);
     }
   }

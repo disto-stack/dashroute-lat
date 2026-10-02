@@ -3,18 +3,25 @@ import { WebSocketChannel } from '../../../../src/channels/websocket/websocket.c
 import { NotificationPayload } from '../../../../src/shared/types/notification-payload.type.js';
 import { Socket, Server } from 'socket.io';
 
+const mockLogger = {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  debug: vi.fn(),
+};
+
 describe('WebSocketChannel', () => {
   let channel: WebSocketChannel;
   let serverMock: any;
 
   beforeEach(() => {
-    channel = new WebSocketChannel();
-    
+    channel = new WebSocketChannel(mockLogger as any);
+
     serverMock = {
       to: vi.fn().mockReturnThis(),
       emit: vi.fn(),
     };
-    
+
     channel.server = serverMock as unknown as Server;
   });
 
