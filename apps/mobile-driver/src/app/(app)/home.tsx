@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
-import { SafeAreaView, StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { tokens } from '@dashroute/ui-tokens';
 import { Button } from '@dashroute/ui';
 import { useAuth } from '@/context/AuthContext';

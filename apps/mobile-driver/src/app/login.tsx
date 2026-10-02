@@ -1,16 +1,26 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { tokens } from '@dashroute/ui-tokens';
 import { Logo } from '@dashroute/ui';
 import { LoginForm } from '@/features/auth/components/LoginForm';
+import { useScrollToEndOnKeyboard } from '@/features/auth/hooks/useScrollToEndOnKeyboard';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
   const { setSession } = useAuth();
+  const scrollRef = useScrollToEndOnKeyboard();
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+    <KeyboardAvoidingView style={styles.screen} behavior="padding">
+    <ScrollView
+      ref={scrollRef}
+      style={styles.screen}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <Logo variant="lockup" size={44} />
 
       <Text style={styles.headline}>Tu ruta{'\n'}empieza{'\n'}aquí.</Text>
@@ -38,6 +48,8 @@ export default function LoginScreen() {
       />
 
     </ScrollView>
+    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
