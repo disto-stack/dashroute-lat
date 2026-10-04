@@ -32,14 +32,39 @@ describe('CaslAbilityFactory', () => {
 
   it('should grant COURIER permission only for assigned orders', () => {
     const courier: AuthenticatedUser = {
-      id: 'courier-888',
+      id: 'usr-courier-1',
       email: 'courier@test.com',
       role: 'COURIER',
+      courierId: 'courier-888',
     };
     const ability = factory.createForUser(courier);
 
     expect(ability.can('read', otherOrder as any)).toBe(true);
     expect(ability.can('read', ownOrder as any)).toBe(false);
     expect(ability.can('create', 'Order')).toBe(false);
+  });
+
+  it('should match COURIER orders by courierId and not by user id', () => {
+    const courier: AuthenticatedUser = {
+      id: 'courier-888',
+      email: 'courier@test.com',
+      role: 'COURIER',
+      courierId: 'cur-111',
+    };
+    const ability = factory.createForUser(courier);
+
+    expect(ability.can('read', otherOrder as any)).toBe(false);
+  });
+
+  it('should grant no permissions to a COURIER without a courier profile', () => {
+    const courier: AuthenticatedUser = {
+      id: 'usr-courier-1',
+      email: 'courier@test.com',
+      role: 'COURIER',
+    };
+    const ability = factory.createForUser(courier);
+
+    expect(ability.can('read', 'Order')).toBe(false);
+    expect(ability.can('update', 'Order')).toBe(false);
   });
 });

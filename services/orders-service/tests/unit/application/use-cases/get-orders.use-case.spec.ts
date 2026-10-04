@@ -36,6 +36,35 @@ describe('GetOrdersUseCase', () => {
     );
   });
 
+  it('should force courierId filter with the courier id (not the user id) when user role is COURIER', async () => {
+    const courierUser: AuthenticatedUser = {
+      id: 'usr-courier-1',
+      email: 'courier@dashroute.com',
+      role: 'COURIER',
+      courierId: 'cur-courier-1',
+    };
+
+    await useCase.execute({ limit: 10, courierId: 'other-id' }, courierUser);
+
+    expect(mockRepo.search).toHaveBeenCalledWith(
+      expect.objectContaining({ courierId: 'cur-courier-1' }),
+      { limit: 10, cursor: undefined },
+    );
+  });
+
+  it('should return an empty page for a COURIER without a courier profile', async () => {
+    const courierUser: AuthenticatedUser = {
+      id: 'usr-courier-1',
+      email: 'courier@dashroute.com',
+      role: 'COURIER',
+    };
+
+    const result = await useCase.execute({ limit: 10 }, courierUser);
+
+    expect(result).toEqual({ data: [], nextCursor: null, hasNextPage: false });
+    expect(mockRepo.search).not.toHaveBeenCalled();
+  });
+
   it('should allow ADMIN to filter by any customerId and courierId', async () => {
     const adminUser: AuthenticatedUser = {
       id: 'admin-1',

@@ -100,11 +100,15 @@ components:
         status:
           type: string
           enum:
+            - IDLE
             - ONLINE
             - OFFLINE
             - BUSY
-          description: The current operational status of the courier.
-          example: ONLINE
+          description: >-
+            The current operational status of the courier. Only `IDLE` makes the
+            courier eligible for automatic dispatch; `OFFLINE` means the courier
+            turned availability off and `BUSY` means a mission is in progress.
+          example: IDLE
 
     MissionAssignedWsPayload:
       type: object
@@ -114,19 +118,17 @@ components:
           example: mission_assigned
         data:
           type: object
+          description: >-
+            Raw `delivery.assigned` payload. It carries no addresses; the client
+            fetches the order (`GET /orders/{id}`) to get the pickup and dropoff
+            coordinates.
           properties:
-            missionId:
+            orderId:
               type: string
               example: ord_1a2b3c4d5e6f7g8h9i0j1k2l
-            driverId:
+            courierId:
               type: string
               example: cur_1a2b3c4d5e6f7g8h9i0j1k2l
-            pickupAddress:
-              type: string
-              example: Calle 100 # 15-20
-            deliveryAddress:
-              type: string
-              example: Cra 7 # 72-41
 
     MissionAssignedRabbitPayload:
       type: object

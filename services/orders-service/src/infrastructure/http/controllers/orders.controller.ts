@@ -27,6 +27,7 @@ import {
   Param,
   Query,
   Inject,
+  ForbiddenException,
 } from '@nestjs/common';
 
 @Controller('orders')
@@ -68,6 +69,9 @@ export class OrdersController {
   @Patch(':id/accept')
   @CheckPolicies((ability: AppAbility) => ability.can('update', 'Order'))
   async acceptOrder(@Param('id') id: string, @Req() req: { user: AuthenticatedUser }) {
-    return this.acceptOrderUseCase.execute(id, req.user.id);
+    if (!req.user.courierId) {
+      throw new ForbiddenException('Authenticated user has no courier profile');
+    }
+    return this.acceptOrderUseCase.execute(id, req.user.courierId);
   }
 }

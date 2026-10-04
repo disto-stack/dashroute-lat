@@ -743,8 +743,9 @@ components:
           example: 40.7128
         status:
           type: string
-          enum: [ONLINE, OFFLINE, BUSY]
-          example: ONLINE
+          enum: [IDLE, ONLINE, OFFLINE, BUSY]
+          description: Only `IDLE` makes the courier eligible for automatic dispatch.
+          example: IDLE
 
     ErrorResponse:
       type: object
