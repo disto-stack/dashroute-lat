@@ -3,22 +3,14 @@ import * as authService from '@/features/auth/services/auth.service';
 import { clearTokens, getTokens } from '@/features/auth/services/token-storage';
 import { LoginResponse, User } from '@/features/auth/types';
 
-type AuthContextType = {
+export type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   setSession: (response: LoginResponse) => void;
   logout: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -43,6 +35,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const setSession = (response: LoginResponse) => {
     setUser(response.user);
+    authService
+      .getMe()
+      .then(setUser)
+      .catch((e) => console.warn('Failed to load courier profile:', e));
   };
 
   const logout = async () => {

@@ -19,7 +19,10 @@ export class GetOrdersUseCase {
     if (user.role === 'CUSTOMER') {
       criteria.customerId = user.id;
     } else if (user.role === 'COURIER') {
-      criteria.courierId = user.id;
+      if (!user.courierId) {
+        return { data: [], nextCursor: null, hasNextPage: false };
+      }
+      criteria.courierId = user.courierId;
     } else if (user.role === 'ADMIN') {
       criteria.customerId = query.customerId;
       criteria.courierId = query.courierId;

@@ -10,33 +10,42 @@ type RNWebSocketConstructor = new (
 
 const RNWebSocket = WebSocket as unknown as RNWebSocketConstructor;
 
+export type AccessTokenProvider = () => Promise<string | null>;
+
 export class LocationSocket {
   private socket: WebSocket | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private closedByClient = false;
 
+  // The token is read on every (re)connection so a refreshed token is picked up.
   constructor(
     private readonly url: string,
-    private readonly accessToken: string
+    private readonly getAccessToken: AccessTokenProvider,
+    private readonly onOpen?: () => void
   ) {}
 
-  connect(): void {
+  async connect(): Promise<void> {
     this.closedByClient = false;
-    this.socket = new RNWebSocket(this.url, undefined, {
-      headers: { Authorization: `Bearer ${this.accessToken}` },
-    });
+    const accessToken = await this.getAccessToken();
+    if (this.closedByClient || !accessToken) return;
 
-    this.socket.onclose = () => {
+    const socket = new RNWebSocket(this.url, undefined, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    this.socket = socket;
+
+    socket.onopen = () => {
+      this.onOpen?.();
+    };
+
+    socket.onclose = () => {
       this.socket = null;
       if (!this.closedByClient) {
         this.scheduleReconnect();
       }
     };
 
-    this.socket.onerror = () => {
-      // onclose still fires after onerror for the RN WebSocket polyfill,
-      // so reconnect scheduling stays centralized there.
-    };
+    socket.onerror = () => {};
   }
 
   send(payload: PingPayload): void {
@@ -59,7 +68,7 @@ export class LocationSocket {
     if (this.reconnectTimer) return;
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
-      this.connect();
+      void this.connect();
     }, RECONNECT_DELAY_MS);
   }
 }

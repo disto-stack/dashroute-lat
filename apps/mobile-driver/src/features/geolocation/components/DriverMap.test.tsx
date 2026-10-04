@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
+import { tokens } from '@dashroute/ui-tokens';
 import { DriverMap } from './DriverMap';
 
 const mockEaseTo = jest.fn();
@@ -53,4 +54,16 @@ test('shows a recenter button once the user pans away, and re-centers on press',
   expect(mockEaseTo).toHaveBeenCalledWith(
     expect.objectContaining({ center: [-74.07, 4.71] })
   );
+});
+
+test('lifts the recenter button above cards floating over the map', async () => {
+  await render(<DriverMap coords={{ latitude: 4.71, longitude: -74.07 }} bottomInset={140} />);
+  await fireEvent(screen.getByTestId('map'), 'regionIsChanging', {
+    nativeEvent: { userInteraction: true },
+  });
+
+  const recenterButton = await screen.findByLabelText('Volver a centrar el mapa en mi ubicación');
+  const style = Object.assign({}, ...[recenterButton.props.style].flat(Infinity));
+
+  expect(style.bottom).toBe(tokens.spacing.space4 + 140);
 });

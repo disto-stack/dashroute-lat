@@ -5,7 +5,7 @@ import { Camera, type CameraRef, Map, Marker, type ViewStateChangeEvent } from '
 import { tokens } from '@dashroute/ui-tokens';
 import { buildMapStyle } from '../map-style';
 import { Coordinate } from '../types';
-import { LocationPuck } from './LocationPuck';
+import { LocationPuck, type LocationPuckMode } from './LocationPuck';
 
 const FALLBACK_CENTER: [number, number] = [-74.0721, 4.711];
 const FOLLOW_ZOOM = 16;
@@ -13,10 +13,11 @@ const FOLLOW_ZOOM = 16;
 type DriverMapProps = {
   coords: Coordinate | null;
   style?: ViewStyle;
-  mode?: 'searching' | 'tracking';
+  mode?: LocationPuckMode;
+  bottomInset?: number;
 };
 
-export function DriverMap({ coords, style, mode = 'searching' }: DriverMapProps) {
+export function DriverMap({ coords, style, mode = 'searching', bottomInset = 0 }: DriverMapProps) {
   const cameraRef = useRef<CameraRef>(null);
   const [isFollowing, setIsFollowing] = useState(true);
 
@@ -53,7 +54,7 @@ export function DriverMap({ coords, style, mode = 'searching' }: DriverMapProps)
           accessibilityRole="button"
           accessibilityLabel="Volver a centrar el mapa en mi ubicación"
           onPress={recenter}
-          style={styles.recenterButton}
+          style={[styles.recenterButton, { bottom: tokens.spacing.space4 + bottomInset }]}
         >
           <RecenterIcon />
         </Pressable>
@@ -81,7 +82,6 @@ const styles = StyleSheet.create({
   recenterButton: {
     position: 'absolute',
     right: tokens.spacing.space4,
-    bottom: tokens.spacing.space4,
     width: tokens.size.control,
     height: tokens.size.control,
     borderRadius: tokens.radius.pill,

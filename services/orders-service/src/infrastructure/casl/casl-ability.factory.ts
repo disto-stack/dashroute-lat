@@ -31,9 +31,9 @@ export class CaslAbilityFactory {
       can('create', 'Order');
       can('read', 'Order', { customerId: user.id });
       can('update', 'Order', { customerId: user.id });
-    } else if (user.role === 'COURIER') {
-      can('read', 'Order', { courierId: user.id });
-      can('update', 'Order', { courierId: user.id });
+    } else if (user.role === 'COURIER' && user.courierId) {
+      can('read', 'Order', { courierId: user.courierId });
+      can('update', 'Order', { courierId: user.courierId });
     }
 
     return build({

@@ -15,5 +15,6 @@ module.exports = {
   },
   moduleNameMapper: {
     '\\.module\\.css$': '<rootDir>/jest/css-module-mock.js',
+    '^react(/.*)?$': '<rootDir>/node_modules/react$1',
   },
 };

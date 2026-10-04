@@ -46,7 +46,7 @@ describe('NotificationsSocket', () => {
     notificationsSocket.connect();
     const mSocket = (io as jest.Mock).mock.results[0].value;
     
-    const missionAssignedCall = mSocket.on.mock.calls.find(call => call[0] === 'mission_assigned');
+    const missionAssignedCall = mSocket.on.mock.calls.find((call: unknown[]) => call[0] === 'mission_assigned');
     expect(missionAssignedCall).toBeDefined();
     
     const [, callback] = missionAssignedCall;
