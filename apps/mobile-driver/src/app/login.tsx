@@ -6,7 +6,7 @@ import { tokens } from '@dashroute/ui-tokens';
 import { Logo } from '@dashroute/ui';
 import { LoginForm } from '@/features/auth/components/LoginForm';
 import { useScrollToEndOnKeyboard } from '@/features/auth/hooks/useScrollToEndOnKeyboard';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function LoginScreen() {
   const { setSession } = useAuth();

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { NotificationsSocket } from '../services/notifications-socket';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { getTokens } from '@/features/auth/services/token-storage';
 import { api, API_URL } from '@/lib/api';
 import * as Notifications from 'expo-notifications';
@@ -9,6 +9,11 @@ import * as Notifications from 'expo-notifications';
 export const useDriverNotifications = (onNewMission: () => void) => {
   const { user } = useAuth();
   const socketRef = useRef<NotificationsSocket | null>(null);
+  const onNewMissionRef = useRef(onNewMission);
+
+  useEffect(() => {
+    onNewMissionRef.current = onNewMission;
+  }, [onNewMission]);
 
   useEffect(() => {
     if (!user) return;
@@ -30,7 +35,7 @@ export const useDriverNotifications = (onNewMission: () => void) => {
 
         const wsUrl = API_URL.replace(/\/api\/v1\/?$/, '');
         socketRef.current = new NotificationsSocket(wsUrl, accessToken, () => {
-          onNewMission();
+          onNewMissionRef.current();
         });
 
         socketRef.current.connect();
@@ -43,13 +48,14 @@ export const useDriverNotifications = (onNewMission: () => void) => {
 
     const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
-        onNewMission();
+        onNewMissionRef.current();
       }
     });
 
     return () => {
       socketRef.current?.close();
+      socketRef.current = null;
       subscription.remove();
     };
-  }, [user, onNewMission]);
+  }, [user]);
 };

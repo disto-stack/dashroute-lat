@@ -1,13 +1,13 @@
 import { renderHook, waitFor } from '@testing-library/react-native';
 import { AppState } from 'react-native';
 import { useDriverNotifications } from './useDriverNotifications';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { getTokens } from '@/features/auth/services/token-storage';
 import { api } from '@/lib/api';
 import * as Notifications from 'expo-notifications';
 import { NotificationsSocket } from '../services/notifications-socket';
 
-jest.mock('@/context/AuthContext', () => ({
+jest.mock('@/features/auth/hooks/useAuth', () => ({
   useAuth: jest.fn(),
 }));
 
@@ -71,6 +71,39 @@ describe('useDriverNotifications', () => {
       const socketInstance = (NotificationsSocket as jest.Mock).mock.instances[0];
       expect(socketInstance.connect).toHaveBeenCalled();
     });
+  });
+
+  it('does not reconnect the socket when only the callback identity changes', async () => {
+    const { rerender } = await renderHook(
+      ({ cb }: { cb: () => void }) => useDriverNotifications(cb),
+      { initialProps: { cb: () => {} } }
+    );
+
+    await waitFor(() => expect(NotificationsSocket).toHaveBeenCalledTimes(1));
+
+    await rerender({ cb: () => {} });
+    await rerender({ cb: () => {} });
+
+    expect(NotificationsSocket).toHaveBeenCalledTimes(1);
+    expect(api.post).toHaveBeenCalledTimes(1);
+  });
+
+  it('invokes the latest callback when the socket reports a mission', async () => {
+    const first = jest.fn();
+    const second = jest.fn();
+    const { rerender } = await renderHook(
+      ({ cb }: { cb: () => void }) => useDriverNotifications(cb),
+      { initialProps: { cb: first } }
+    );
+    await waitFor(() => expect(NotificationsSocket).toHaveBeenCalled());
+
+    await rerender({ cb: second });
+
+    const onMission = (NotificationsSocket as jest.Mock).mock.calls[0][2];
+    onMission();
+
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
   });
 
   it('calls onNewMission when AppState becomes active', async () => {

@@ -47,7 +47,7 @@ export function useCurrentLocation(): UseCurrentLocationResult {
 
     start().catch((e) => {
       if (!isMounted) return;
-      setError(e instanceof Error ? e.message : 'No se pudo obtener la ubicación');
+      setError(e instanceof Error ? e.message : 'Unable to get location');
       setStatus('denied');
     });
 
