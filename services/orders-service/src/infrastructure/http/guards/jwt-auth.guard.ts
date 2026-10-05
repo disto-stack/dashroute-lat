@@ -32,8 +32,9 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('Authentication token missing');
     }
 
+    const secret = this.configService.get<string>('JWT_SECRET') || this.devFallbackSecret();
+
     try {
-      const secret = this.configService.get<string>('JWT_SECRET') || 'fallback-secret-for-dev';
       const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
       const user: AuthenticatedUser = {
         id: decoded.sub || decoded.userId,
@@ -49,6 +50,13 @@ export class JwtAuthGuard implements CanActivate {
       this.logger.error(`Token verification failed: ${err.message}`, err.stack);
       throw new UnauthorizedException('Invalid or expired authentication token');
     }
+  }
+
+  private devFallbackSecret(): string {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('JWT_SECRET must be set in production');
+    }
+    return 'fallback-secret-for-dev';
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {

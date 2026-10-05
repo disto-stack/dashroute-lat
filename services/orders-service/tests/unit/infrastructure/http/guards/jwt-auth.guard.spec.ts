@@ -46,6 +46,22 @@ describe('JwtAuthGuard', () => {
     );
   });
 
+  it('should refuse to fall back to the dev secret in production', async () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    try {
+      const noSecretGuard = new JwtAuthGuard({ get: () => undefined } as any);
+      const token = jwt.sign({ userId: 'user-123' }, secret);
+      const { switchToHttp } = createMockContext(`Bearer ${token}`);
+
+      await expect(noSecretGuard.canActivate({ switchToHttp } as ExecutionContext)).rejects.toThrow(
+        'JWT_SECRET must be set in production',
+      );
+    } finally {
+      process.env.NODE_ENV = originalEnv;
+    }
+  });
+
   it('should throw UnauthorizedException when JWT signature is invalid', async () => {
     const token = jwt.sign({ userId: 'user-123' }, 'wrong-secret');
     const { switchToHttp } = createMockContext(`Bearer ${token}`);
