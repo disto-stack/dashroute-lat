@@ -35,7 +35,7 @@ http://api.dashroute.localhost, http://:80 {
 
 		@orders path /orders /orders/*
 		handle @orders {
-			reverse_proxy host.docker.internal:4002 {
+			reverse_proxy {$ORDERS_UPSTREAM:host.docker.internal:4002} {
 				header_down -Access-Control-Allow-Origin
 				header_down -Access-Control-Allow-Methods
 				header_down -Access-Control-Allow-Headers

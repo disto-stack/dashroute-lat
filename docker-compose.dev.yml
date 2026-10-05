@@ -1,0 +1,13 @@
+services:
+  orders:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+    volumes:
+      - ./services/orders-service/src:/repo/services/orders-service/src
+    ports:
+      - '4002:4002'
+      - '9229:9229'
+    command: ['pnpm', 'dev:debug']

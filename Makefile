@@ -1,4 +1,6 @@
-.PHONY: help install infra-up infra-down test lint lint-fix format format-check build dev-auth dev-orders dev-audit dev-dispatch dev-geolocation dev-services
+.PHONY: help install infra-up infra-down up up-backend up-web up-all up-prod down logs ps test lint lint-fix format format-check build dev-auth dev-audit dev-dispatch dev-geolocation dev-services
+
+COMPOSE_DEV := docker compose -f docker-compose.yml -f docker-compose.dev.yml
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -8,6 +10,33 @@ infra-up:
 
 infra-down:
 	docker compose down
+
+up:
+	@test -n "$(s)" || (echo "Usage: make up s=<service...>  (e.g. make up s=orders)" && exit 1)
+	$(COMPOSE_DEV) up $(s)
+
+up-backend:
+	$(COMPOSE_DEV) --profile backend up
+
+up-web:
+	$(COMPOSE_DEV) --profile web up
+
+up-all:
+	$(COMPOSE_DEV) --profile all up
+
+up-prod:
+	@test -n "$(s)" || (echo "Usage: make up-prod s=<service...>" && exit 1)
+	docker compose up --build $(s)
+
+down:
+	$(COMPOSE_DEV) --profile all down
+
+logs:
+	@test -n "$(s)" || (echo "Usage: make logs s=<service>" && exit 1)
+	$(COMPOSE_DEV) logs -f --no-log-prefix $(s) | pnpm dlx pino-pretty
+
+ps:
+	$(COMPOSE_DEV) --profile all ps
 
 install:
 	pnpm install
@@ -36,9 +65,6 @@ build:
 
 dev-auth:
 	pnpm dev:auth
-
-dev-orders:
-	pnpm dev:orders
 
 dev-audit:
 	pnpm dev:audit

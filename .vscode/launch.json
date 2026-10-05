@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach: orders-service (Docker, 9229)",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9229,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/services/orders-service",
+      "remoteRoot": "/repo/services/orders-service",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    }
+  ]
+}

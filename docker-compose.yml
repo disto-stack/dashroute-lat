@@ -26,6 +26,8 @@ services:
       - '443:443'
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      ORDERS_UPSTREAM: ${ORDERS_UPSTREAM:-orders:4002}
     volumes:
       - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -102,6 +104,40 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  orders:
+    build:
+      context: .
+      dockerfile: services/orders-service/Dockerfile
+      target: prod
+    container_name: delivery_orders
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 512m
+    networks:
+      - delivery_network
+    environment:
+      NODE_ENV: production 
+      PORT: 4002
+      SERVICE_NAME: orders-service
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-dashroute}
+      RABBITMQ_HOST: broker
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
 
   swagger_ui:
     image: swaggerapi/swagger-ui:latest
