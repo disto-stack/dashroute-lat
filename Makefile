@@ -1,6 +1,8 @@
-.PHONY: help install infra-up infra-down up up-backend up-web up-all up-prod down logs ps test lint lint-fix format format-check build dev-auth dev-audit dev-dispatch dev-geolocation dev-services
+.PHONY: help install infra-up infra-down up up-backend up-web up-all up-prod down logs ps test lint lint-fix format format-check build
 
 COMPOSE_DEV := docker compose -f docker-compose.yml -f docker-compose.dev.yml
+INFRA := api_gateway postgres migrator cache broker swagger_ui jaeger loki prometheus otel-collector grafana
+NO_ATTACH := $(foreach i,$(INFRA),--no-attach $(i))
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -13,16 +15,16 @@ infra-down:
 
 up:
 	@test -n "$(s)" || (echo "Usage: make up s=<service...>  (e.g. make up s=orders)" && exit 1)
-	$(COMPOSE_DEV) up $(s)
+	$(COMPOSE_DEV) up --build $(NO_ATTACH) $(s)
 
 up-backend:
-	$(COMPOSE_DEV) --profile backend up
+	$(COMPOSE_DEV) --profile backend up --build $(NO_ATTACH)
 
 up-web:
-	$(COMPOSE_DEV) --profile web up
+	$(COMPOSE_DEV) --profile web up --build $(NO_ATTACH)
 
 up-all:
-	$(COMPOSE_DEV) --profile all up
+	$(COMPOSE_DEV) --profile all up --build $(NO_ATTACH)
 
 up-prod:
 	@test -n "$(s)" || (echo "Usage: make up-prod s=<service...>" && exit 1)
@@ -62,20 +64,3 @@ build:
 	pnpm build
 	@if [ -f services/dispatch-engine/cmd/dispatch/main.go ]; then go build -o bin/dispatch ./services/dispatch-engine/cmd/dispatch; fi
 	@if [ -f services/geolocation-service/cmd/server/main.go ]; then go build -o bin/geolocation ./services/geolocation-service/cmd/server; fi
-
-dev-auth:
-	pnpm dev:auth
-
-dev-audit:
-	pnpm dev:audit
-
-dev-dispatch:
-	pnpm dev:dispatch
-
-dev-geolocation:
-	pnpm dev:geolocation
-
-dev-services:
-	pnpm dev:services
-
-

@@ -11,3 +11,80 @@ services:
       - '4002:4002'
       - '9229:9229'
     command: ['pnpm', 'dev:debug']
+
+  auth:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-jwt-refresh-secret}
+    volumes:
+      - ./services/auth-service/src:/repo/services/auth-service/src
+    ports:
+      - '4001:4001'
+      - '9230:9230'
+    command: ['pnpm', 'dev:debug']
+
+  audit:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+    volumes:
+      - ./services/audit-service/src:/repo/services/audit-service/src
+    ports:
+      - '9231:9231'
+    command: ['pnpm', 'dev:debug']
+
+  notifications:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret}
+    volumes:
+      - ./services/notifications-service/src:/repo/services/notifications-service/src
+    ports:
+      - '4004:4004'
+      - '9232:9232'
+    command: ['pnpm', 'dev:debug']
+
+  dispatch:
+    build:
+      target: dev
+    mem_limit: 1g
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./services/dispatch-engine:/repo/services/dispatch-engine
+    ports:
+      - '2345:2345'
+
+  geolocation:
+    build:
+      target: dev
+    mem_limit: 1g
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret}
+    volumes:
+      - ./services/geolocation-service:/repo/services/geolocation-service
+    ports:
+      - '4003:4003'
+      - '2346:2346'
+
+  admin-web:
+    build:
+      target: dev
+    mem_limit: 1g
+    environment:
+      NODE_OPTIONS: --inspect=0.0.0.0:9233
+    volumes:
+      - ./apps/admin-web/src:/repo/apps/admin-web/src
+      - ./packages/ui/src:/repo/packages/ui/src
+      - ./packages/ui-tokens/src:/repo/packages/ui-tokens/src
+    ports:
+      - '9233:9233'
