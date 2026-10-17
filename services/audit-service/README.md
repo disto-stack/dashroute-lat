@@ -12,8 +12,10 @@ The **Audit Service** is a lightweight stream consumer for **DashRoute**, built 
 
 ## Running Locally
 
-To run the Audit Service in development mode:
+To run the Audit Service in development mode (Docker, ADR 0020):
 
 ```bash
-pnpm run dev:audit
+make up s=audit
 ```
+
+Manual fallback on the host (after `make infra-up`): `pnpm --filter audit-service dev`.
