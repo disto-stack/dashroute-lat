@@ -1,0 +1,31 @@
+# Air config used inside the dev container (ADR 0020): rebuilds and runs under delve.
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -gcflags='all=-N -l' -o ./tmp/main ./cmd/geolocation"
+bin = "./tmp/main"
+full_bin = "dlv exec ./tmp/main --headless --listen=0.0.0.0:2346 --api-version=2 --accept-multiclient --continue"
+include_ext = ["go", "yaml", "yml", "json"]
+exclude_dir = ["assets", "tmp", "vendor", "tests"]
+include_dir = []
+exclude_file = []
+exclude_regex = ["_test.go"]
+exclude_unchanged = false
+follow_symlink = false
+log = "build-errors.log"
+poll = false
+poll_interval = 0
+delay = 1000 # ms
+stop_on_error = true
+send_interrupt = true
+kill_delay = 500 # ms
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true
