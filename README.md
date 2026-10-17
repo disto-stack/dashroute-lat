@@ -31,3 +31,7 @@ Debugging: each service exposes a debug port in full-dev. Use the matching `Atta
 Manual fallback (service on the host): run `make infra-up`, then `pnpm --filter <service> dev` (or `air` for Go), and set the matching `AUTH_UPSTREAM` / `ORDERS_UPSTREAM` / `GEO_UPSTREAM` / `NOTIFICATIONS_UPSTREAM=host.docker.internal:<port>` in `.env` so the gateway routes to the host.
 
 Secrets: `make up-prod` requires `JWT_SECRET` and `JWT_REFRESH_SECRET` in `.env`; full-dev falls back to dev-only values.
+
+## Production (VPS)
+
+`docker compose -f docker-compose.yml -f docker-compose.prod.yml --profile all up -d`. Only the gateway (80/443) is public; Grafana and admin-web listen on `127.0.0.1` (use an SSH tunnel). Required in `.env`: `GHCR_OWNER`, `DB_PASSWORD`, `RABBITMQ_PASS`, `GRAFANA_ADMIN_PASSWORD`, `JWT_SECRET`, `JWT_REFRESH_SECRET`. Swagger is off unless you add `--profile docs`.
