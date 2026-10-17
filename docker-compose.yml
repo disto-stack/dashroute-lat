@@ -114,6 +114,12 @@ services:
       dockerfile: services/orders-service/Dockerfile
       target: prod
     container_name: delivery_orders
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4002/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     profiles: [backend, all]
     restart: unless-stopped
     mem_limit: 512m
@@ -148,6 +154,12 @@ services:
       dockerfile: services/auth-service/Dockerfile
       target: prod
     container_name: delivery_auth
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4001/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     profiles: [backend, all]
     restart: unless-stopped
     mem_limit: 512m
@@ -209,6 +221,12 @@ services:
       dockerfile: services/notifications-service/Dockerfile
       target: prod
     container_name: delivery_notifications
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4004/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     profiles: [backend, all]
     restart: unless-stopped
     mem_limit: 512m
@@ -269,6 +287,12 @@ services:
       dockerfile: services/geolocation-service/Dockerfile
       target: prod
     container_name: delivery_geolocation
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4003/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     profiles: [backend, all]
     restart: unless-stopped
     mem_limit: 256m
@@ -289,6 +313,12 @@ services:
       dockerfile: apps/admin-web/Dockerfile
       target: prod
     container_name: delivery_admin_web
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:3000/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     profiles: [web, all]
     restart: unless-stopped
     mem_limit: 512m

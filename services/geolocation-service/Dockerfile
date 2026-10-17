@@ -25,8 +25,8 @@ COPY services/geolocation-service services/geolocation-service
 WORKDIR /repo/services/geolocation-service
 RUN --mount=type=cache,target=/root/.cache/go-build \
     go build -trimpath -ldflags="-s -w" -o /out/geolocation-service ./cmd/geolocation
-FROM gcr.io/distroless/static-debian12:nonroot AS prod
+FROM alpine:3.21 AS prod
 COPY --from=build /out/geolocation-service /app/geolocation-service
-USER nonroot
+USER nobody
 EXPOSE 4003
 ENTRYPOINT ["/app/geolocation-service"]

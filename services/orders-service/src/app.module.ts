@@ -5,6 +5,7 @@ import { DatabaseModule } from './infrastructure/database/database.module.js';
 import { CaslModule } from './infrastructure/casl/casl.module.js';
 import { RabbitMQModule } from './infrastructure/messaging/rabbitmq.module.js';
 import { OrdersController } from './infrastructure/http/controllers/orders.controller.js';
+import { HealthController } from './infrastructure/http/controllers/health.controller.js';
 import { CreateOrderUseCase } from './application/use-cases/create-order.use-case.js';
 import { GetOrdersUseCase } from './application/use-cases/get-orders.use-case.js';
 import { GetOrderByIdUseCase } from './application/use-cases/get-order-by-id.use-case.js';
@@ -37,7 +38,7 @@ import { JwtAuthGuard } from './infrastructure/http/guards/jwt-auth.guard.js';
     CaslModule,
     RabbitMQModule,
   ],
-  controllers: [OrdersController],
+  controllers: [OrdersController, HealthController],
   providers: [
     CreateOrderUseCase,
     GetOrdersUseCase,
