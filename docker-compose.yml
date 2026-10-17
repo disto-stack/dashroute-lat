@@ -26,6 +26,11 @@ services:
       - '443:443'
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      AUTH_UPSTREAM: ${AUTH_UPSTREAM:-auth:4001}
+      ORDERS_UPSTREAM: ${ORDERS_UPSTREAM:-orders:4002}
+      GEO_UPSTREAM: ${GEO_UPSTREAM:-geolocation:4003}
+      NOTIFICATIONS_UPSTREAM: ${NOTIFICATIONS_UPSTREAM:-notifications:4004}
     volumes:
       - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -103,6 +108,225 @@ services:
       timeout: 5s
       retries: 5
 
+  orders:
+    build:
+      context: .
+      dockerfile: services/orders-service/Dockerfile
+      target: prod
+    container_name: delivery_orders
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4002/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 512m
+    networks:
+      - delivery_network
+    environment:
+      NODE_ENV: production
+      PORT: 4002
+      SERVICE_NAME: orders-service
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-dashroute}
+      RABBITMQ_HOST: broker
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+      target: prod
+    container_name: delivery_auth
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4001/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 512m
+    networks:
+      - delivery_network
+    environment:
+      NODE_ENV: production
+      PORT: 4001
+      SERVICE_NAME: auth-service
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET is required}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-dashroute}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+
+  audit:
+    build:
+      context: .
+      dockerfile: services/audit-service/Dockerfile
+      target: prod
+    container_name: delivery_audit
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 256m
+    networks:
+      - delivery_network
+    environment:
+      NODE_ENV: production
+      SERVICE_NAME: audit-service
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-dashroute}
+      RABBITMQ_HOST: broker
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+
+  notifications:
+    build:
+      context: .
+      dockerfile: services/notifications-service/Dockerfile
+      target: prod
+    container_name: delivery_notifications
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4004/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 512m
+    networks:
+      - delivery_network
+    environment:
+      NODE_ENV: production
+      PORT: 4004
+      SERVICE_NAME: notifications-service
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      EXPO_ACCESS_TOKEN: ${EXPO_ACCESS_TOKEN:-}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-dashroute}
+      RABBITMQ_HOST: broker
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+
+  dispatch:
+    build:
+      context: .
+      dockerfile: services/dispatch-engine/Dockerfile
+      target: prod
+    container_name: delivery_dispatch
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 256m
+    networks:
+      - delivery_network
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://cache:6379/0
+      RABBITMQ_HOST: broker
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      cache:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+
+  geolocation:
+    build:
+      context: .
+      dockerfile: services/geolocation-service/Dockerfile
+      target: prod
+    container_name: delivery_geolocation
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4003/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 256m
+    networks:
+      - delivery_network
+    environment:
+      PORT: 4003
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      REDIS_URL: redis://cache:6379/0
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      cache:
+        condition: service_healthy
+
+  admin-web:
+    build:
+      context: .
+      dockerfile: apps/admin-web/Dockerfile
+      target: prod
+    container_name: delivery_admin_web
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:3000/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles: [web, all]
+    restart: unless-stopped
+    mem_limit: 512m
+    networks:
+      - delivery_network
+    ports:
+      - '${ADMIN_WEB_PORT:-3001}:3000' # 3000 is taken by Grafana
+
   swagger_ui:
     image: swaggerapi/swagger-ui:latest
     container_name: delivery_swagger
@@ -110,7 +334,7 @@ services:
     networks:
       - delivery_network
     environment:
-      URLS: "[{ url: 'specs/dashroute-unified.openapi.yaml', name: '🌟 DashRoute API (Unified Gateway)' }, { url: 'specs/dev/auth-service.openapi.yaml', name: '🛠️ [DEV ONLY] Auth Service (:4001)' }, { url: 'specs/dev/orders-service.openapi.yaml', name: '📦 [DEV ONLY] Orders Service (:4002)' }, { url: 'specs/dev/geolocation-service.openapi.yaml', name: '📍 [DEV ONLY] Geolocation Service (:4003)' }]"
+      URLS: "[{ url: 'specs/dashroute-unified.openapi.yaml', name: 'DashRoute API (Unified Gateway)' }, { url: 'specs/dev/auth-service.openapi.yaml', name: '[DEV ONLY] Auth Service (:4001)' }, { url: 'specs/dev/orders-service.openapi.yaml', name: '[DEV ONLY] Orders Service (:4002)' }, { url: 'specs/dev/geolocation-service.openapi.yaml', name: '[DEV ONLY] Geolocation Service (:4003)' }]"
     volumes:
       - ./docs/api:/usr/share/nginx/html/specs:ro
     ports:

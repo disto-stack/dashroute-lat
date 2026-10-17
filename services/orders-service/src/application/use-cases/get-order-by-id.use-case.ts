@@ -4,13 +4,13 @@ import {
   type IOrderRepository,
 } from '../../domain/ports/order-repository.port.js';
 import { type AuthenticatedUser } from '../../infrastructure/http/guards/jwt-auth.guard.js';
-import { type CaslAbilityFactory } from '../../infrastructure/casl/casl-ability.factory.js';
+import { CaslAbilityFactory } from '../../infrastructure/casl/casl-ability.factory.js';
 
 @Injectable()
 export class GetOrderByIdUseCase {
   constructor(
     @Inject(ORDER_REPOSITORY_PORT) private readonly orderRepository: IOrderRepository,
-    private readonly caslAbilityFactory: CaslAbilityFactory,
+    @Inject(CaslAbilityFactory) private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   async execute(orderId: string, user: AuthenticatedUser) {

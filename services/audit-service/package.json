@@ -7,6 +7,7 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "tsx watch --import ./src/instrumentation.ts src/main.ts",
+    "dev:debug": "tsx watch --inspect=0.0.0.0:9231 --import ./src/instrumentation.ts src/main.ts",
     "build": "tsc",
     "start": "node --import ./dist/instrumentation.js dist/main.js",
     "test": "vitest run",
@@ -19,6 +20,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\""
   },
   "dependencies": {
+    "@opentelemetry/api-logs": "^0.222.0",
     "@opentelemetry/auto-instrumentations-node": "^0.80.0",
     "@opentelemetry/exporter-logs-otlp-grpc": "^0.222.0",
     "@opentelemetry/exporter-metrics-otlp-grpc": "^0.222.0",

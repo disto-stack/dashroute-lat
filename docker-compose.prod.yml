@@ -1,0 +1,85 @@
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+x-db: &db
+  DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+
+x-mq: &mq
+  RABBITMQ_PASS: ${RABBITMQ_PASS:?RABBITMQ_PASS is required}
+
+services:
+  api_gateway:
+    logging: *logging
+  orders:
+    image: ghcr.io/${GHCR_OWNER:?GHCR_OWNER is required}/dashroute-orders:${IMAGE_TAG:-latest}
+    logging: *logging
+    environment: { <<: [*db, *mq] }
+  auth:
+    image: ghcr.io/${GHCR_OWNER}/dashroute-auth:${IMAGE_TAG:-latest}
+    logging: *logging
+    environment: { <<: *db }
+  audit:
+    image: ghcr.io/${GHCR_OWNER}/dashroute-audit:${IMAGE_TAG:-latest}
+    logging: *logging
+    environment: { <<: [*db, *mq] }
+  notifications:
+    image: ghcr.io/${GHCR_OWNER}/dashroute-notifications:${IMAGE_TAG:-latest}
+    logging: *logging
+    environment: { <<: [*db, *mq] }
+  dispatch:
+    image: ghcr.io/${GHCR_OWNER}/dashroute-dispatch:${IMAGE_TAG:-latest}
+    logging: *logging
+    environment: { <<: *mq }
+  geolocation:
+    image: ghcr.io/${GHCR_OWNER}/dashroute-geolocation:${IMAGE_TAG:-latest}
+    logging: *logging
+  admin-web:
+    image: ghcr.io/${GHCR_OWNER}/dashroute-admin-web:${IMAGE_TAG:-latest}
+    logging: *logging
+    ports: !override
+      - '127.0.0.1:${ADMIN_WEB_PORT:-3001}:3000' # no Caddy route yet
+  postgres:
+    logging: *logging
+    ports: !reset []
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+  migrator:
+    logging: *logging
+    command: !override
+      - -path=/migrations
+      - -database=postgres://${DB_USER:-postgres}:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/${DB_NAME:-dashroute}?sslmode=disable
+      - up
+  broker:
+    logging: *logging
+    ports: !reset []
+    environment:
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:?RABBITMQ_PASS is required}
+  cache:
+    logging: *logging
+    ports: !reset []
+  otel-collector:
+    logging: *logging
+    ports: !reset []
+  loki:
+    logging: *logging
+    ports: !reset []
+  prometheus:
+    logging: *logging
+    ports: !reset []
+  jaeger:
+    logging: *logging
+    ports: !reset []
+  grafana:
+    logging: *logging
+    ports: !override
+      - '127.0.0.1:3000:3000'
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
+  swagger_ui:
+    logging: *logging
+    profiles: !override [docs]
+    ports: !override
+      - '127.0.0.1:${SWAGGER_PORT:-8080}:8080'

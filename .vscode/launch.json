@@ -1,0 +1,82 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach: orders-service (Docker, 9229)",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9229,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/services/orders-service",
+      "remoteRoot": "/repo/services/orders-service",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "Attach: auth-service (Docker, 9230)",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9230,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/services/auth-service",
+      "remoteRoot": "/repo/services/auth-service",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "Attach: audit-service (Docker, 9231)",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9231,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/services/audit-service",
+      "remoteRoot": "/repo/services/audit-service",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "Attach: notifications-service (Docker, 9232)",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9232,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/services/notifications-service",
+      "remoteRoot": "/repo/services/notifications-service",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "Attach: admin-web (Docker, 9233)",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9233,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/apps/admin-web",
+      "remoteRoot": "/repo/apps/admin-web",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "Attach: dispatch-engine (Docker, Delve 2345)",
+      "type": "go",
+      "request": "attach",
+      "mode": "remote",
+      "host": "localhost",
+      "port": 2345,
+      "substitutePath": [
+        { "from": "${workspaceFolder}", "to": "/repo" }
+      ]
+    },
+    {
+      "name": "Attach: geolocation-service (Docker, Delve 2346)",
+      "type": "go",
+      "request": "attach",
+      "mode": "remote",
+      "host": "localhost",
+      "port": 2346,
+      "substitutePath": [
+        { "from": "${workspaceFolder}", "to": "/repo" }
+      ]
+    }
+  ]
+}
