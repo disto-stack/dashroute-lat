@@ -100,3 +100,8 @@ Table notifications_processed_events {
   processed_at timestamptz [not null, default: `now()`]
 }
 
+Table ai_ops_processed_events {
+  event_id varchar(36) [pk, note: 'UUID v4 of the source event already diagnosed (idempotency, ADR 0021)']
+  processed_at timestamptz [not null, default: `now()`]
+}
+
