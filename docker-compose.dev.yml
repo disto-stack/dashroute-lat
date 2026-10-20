@@ -53,6 +53,19 @@ services:
       - '9232:9232'
     command: ['pnpm', 'dev:debug']
 
+  ai-ops:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+    volumes:
+      - ./services/ai-ops-service/src:/repo/services/ai-ops-service/src
+    ports:
+      - '4005:4005'
+      - '9233:9233'
+    command: ['pnpm', 'dev:debug']
+
   dispatch:
     build:
       target: dev

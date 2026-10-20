@@ -256,6 +256,32 @@ services:
       broker:
         condition: service_healthy
 
+  ai-ops:
+    build:
+      context: .
+      dockerfile: services/ai-ops-service/Dockerfile
+      target: prod
+    container_name: delivery_ai_ops
+    healthcheck:
+      test: ['CMD', 'wget', '-qO', '/dev/null', 'http://127.0.0.1:4005/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles: [backend, all]
+    restart: unless-stopped
+    mem_limit: 256m
+    networks:
+      - delivery_network
+    environment:
+      NODE_ENV: production
+      PORT: 4005
+      SERVICE_NAME: ai-ops-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+
   dispatch:
     build:
       context: .

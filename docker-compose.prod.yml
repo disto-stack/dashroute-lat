@@ -29,6 +29,9 @@ services:
     image: ghcr.io/${GHCR_OWNER}/dashroute-notifications:${IMAGE_TAG:-latest}
     logging: *logging
     environment: { <<: [*db, *mq] }
+  ai-ops:
+    image: ghcr.io/${GHCR_OWNER}/dashroute-ai-ops:${IMAGE_TAG:-latest}
+    logging: *logging
   dispatch:
     image: ghcr.io/${GHCR_OWNER}/dashroute-dispatch:${IMAGE_TAG:-latest}
     logging: *logging
